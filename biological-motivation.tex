@@ -1,0 +1,102 @@
+\chapter{Biological Motivation and K-mer Abundance}
+
+In this chapter we firstly explain the biological context and then we define a k-mer abundance histogram.
+
+\section{DNA Sequencing}
+
+DNA molecules store genetic information in organisms as linear chains of nucleotides.
+Four types of nucleotides can be present in DNA -- Adenine, Cytosine, Guanine and Thymine.
+Therefore, we can represent a DNA molecule as a sequence of characters \texttt{A, C, G, T}.
+
+The whole genetic information of an organism, stored in a few DNA molecules, is called a genome.
+Genome sizes range from thousands of nucleotides in viruses up to hundreds of billions nucleotides in some plants.
+Length of a human genome is known to be around 3.2 billion nucleotides.
+
+In sequencing process we try to obtain a nucleotide sequence of DNA. Current technologies can, however, read only
+short segments of a nucleotide chain, producing reads of length 100--1000 nucleotides, depending on technology used. 
+In sequencing experiment, the DNA is randomly fragmented to shorter pieces at first and then the ends of these pieces are sequenced.
+Therefore, each read originates from a specific unknown location in genome. Every read can also be represented as a string of \texttt{A, C, G, T} characters.
+
+There are multiple factors that affect the quality of reads, but we will mostly consider only one type of errors: 
+a single nucleotide substitutions caused by sequencer itself. Occasionaly a nucleotide of DNA is
+read incorrectly and so it is considered to be one of three other nucleotides. We use the term error rate to
+quantify the fraction of incorrectly read nucleotides.
+
+\section{Genome Assembly}
+
+When the reads are retrieved, it is then the task for bioinformatics to assemble the whole genome from many short fragments.
+The genome assembly relies on the overlaps of reads such as in figure \ref{fig:overlapping-reads}:
+when suffix of one read is identical to prefix of another read, they presumably originate from locations in genome close to each other,
+and thus can be joined to form a longer sequence.
+
+\begin{figure}[h]
+\centering
+\begin{varwidth}{\linewidth}
+\begin{verbatim}
+genomic sequence:    CCGACGTCCACCTGTGATCGGATG
+          read A:         GTCCACCT
+          read B:             ACCTGTGA
+\end{verbatim}
+\end{varwidth}
+\caption[Two overlapping reads]{Two reads of length 8 overlapping one another in 4 nucleotides.}
+\label{fig:overlapping-reads}
+\end{figure}
+
+Without a large enough number of reads, the reconstruction of genome would not be possible.
+Not only that the reads should cover the whole length of the genome, but there should also be a sufficient number of read overlaps.
+In other words, each location in genome should be a part of multiple reads. The average number of reads covering each nucleotide
+is called coverage. Since the source locations of reads are randomly distributed over the genome, even at high coverage some areas
+of genome can remain unsequenced thus preventing complete assembly.
+
+In order to achieve a successful assembly, the preceding sequencing must provide a sufficiently high coverage.
+The estimate of genome length is therefore necessary to plan a sequencing experiment. We can base the
+estimate on the genome of a related species or we can sequence the genome in a preliminary experiment,
+estimate the coverage by means of overlaps and then continue the sequencing process until a desired coverage is achieved.
+
+\medskip
+
+Another complication is caused by repeating sequences. Large areas of genome consist of short sequences repeated many times.
+When we obtain reads \texttt{TATATA, ATATAT, ATATA}, their shortest combination \texttt{TATATAT} may not correspond with the original sequence in genome.
+If the length of the sequence is known beforehand, the number of repeats can be deduced from it.
+
+During the evolution, even longer segments can be copied to different locations, 
+creating multiple identical sequences in different parts of genome. The number of copies present 
+can be deduced from the coverage of these sequences: if the average coverage of the whole genome 
+is $c$, then a sequence duplicated once is expected to be a part of twice as many reads and so to
+have coverage $2c$, a sequence duplicated twice is expected to have coverage $3c$.
+
+
+\section{K-mer Abundance Histogram}
+As we mentioned in the previous section, it would be helpful to know some characteristics of a genome before its assembly -- 
+length of genome, coverage, extent and multiplicity of duplicated regions. In the previous years there were a few
+researches concerned with the estimation of some of these characteristics without the need of computationally demanding 
+genome assembly \cite{Hozza2015, Melsted2014, Sivadasan2016}. 
+
+To obtain information from reads, the reads are at first processed into $k$-mers. A $k$-mer is a substring of length exactly $k$.
+Using a read of length $r$ we produce $r-k+1$ $k$-mers. $k$-mers are then used to calculate a compact summary statistic -- $k$-mer 
+abundance histogram. 
+
+\begin{definition}
+A $k$-mer abundance histogram is a sequence $H = h_1, h_2, h_3, \dots h_m$, where $h_i$ is the number of $k$-mers that occur in
+the input set exactly $i$ times and $m$ is the maximum observed abundance.
+\end{definition}
+
+When we consider a genome without duplicated sequences and sequencing without reading errors, we would expect the histogram
+to reach its maximum at the value of average coverage -- $c$. Most of the locations in genome are covered by $c$ reads,
+and each read of a particular location produces one $k$-mer.
+
+The duplicated sequences in genome should result in other peaks at values $2c, 3c, \dots nc$ and from the relative heights of these peaks, $h_{jc}$,
+we should be able to determine sizes of areas duplicated $j$ times.
+
+The sequencing error rates also change the shape of histogram. With error rate of $1\%$ and $k=21$, about $19\%$ $k$-mers are
+erroneous and thus unique with high probability, creating a notable peak in histogram at value $1$. 
+
+The value of $k$ must be set high enough to prevent two unrelated genome locations from producing the same $k$-mers\footnote{Under
+the assumption that each of \texttt{A, C, G, T} nucleotide occurs at each position with probability $1/4$, we can expect
+$L \cdot 4^{-k}$ \textit{collisions} in a genome of length $L$.}, but with higher values of $k$, each sequencing error affects more $k$-mers.
+
+\medskip
+
+There are more methods in bioinformatics that are based on $k$-mers. During the genome assembly, instead of overlaps of reads, the overlaps of $k$-mers can be
+considered. As the $k$-mer abundance histogram can be calculated in a short time (see Section \ref{sec:algorithms}), this statistic can be also used for 
+a selection of an optimal $k$ \cite{Chikhi2013}.

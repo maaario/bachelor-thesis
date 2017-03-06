@@ -1,0 +1,81 @@
+\chapter{Previous Work}
+
+In this chapter we summarize some of the fastest algorithms for approximating histogram of $k$-mer abundance 
+and describe generative probabilistic models used for genome length estimation.
+
+\section{Computing K-mer Abundance Histogram}
+\label{sec:algorithms}
+
+The simple approach to compute $k$-mer abundance histogram would be to firstly compute $k$-mer counts --
+exact number of occurrences of all $k$-mers -- and then count unique $k$-mers with $j$ occurrences for each $j$.
+Since the role of $k$-mer counts is also important in bioinformatics, there exist many tools that
+compute $k$-mer counts. In the first subsection we briefly summarize these algorithms.
+
+$k$-mer counting is still a computationally demanding task for a large amount of $k$-mers, however.
+As we are only interested in the histogram, the problem of $k$-mer counting can be avoided,
+allowing us to estimate the histogram very efficiently without an intermediate step.
+
+\subsection{Exact K-mer Abundance Counting}
+\label{sec:exact-algorithms}
+In the naive hashing algorithm, we would create a hash table $T$ indexed by the strings of length $k$
+and storing the number of occurrences of a $k$-mer $s$ in the counter $T[s]$. In a single scan through all the reads we
+would then increment the appropriate counters. This solution works well for millions of $k$-mers, but as
+the number of distinct $k$-mers increases, we must use larger hash tables in order to prevent collisions.
+This solution becomes much slower when the hash table $T$ becomes larger than RAM available.
+
+A few techniques were used to decrease the time and memory consumption by a constant factor. 
+These improvements allowed the hashing approach to be used in practice:
+
+\begin{itemize}
+\item Based on an observation that most of the $k$-mers with only one occurrence come from erroneous reads,
+BFCounter \cite{Melsted2011} uses a Bloom filter to exclude rare $k$-mers from hash table thus saving memory.
+
+\item Jellyfish \cite{Marcais2011} software uses a thread-safe hash table utilizing the advantage of parallel computing.
+
+\item To decrease the size of hash table, Disk Streaming of K-mers (DSK) \cite{Rizk2013} algorithm scans the input data in more
+iterations, processing only a subset of $k$-mers in each iteration. Another hash function is used to determine the subset
+(and the iteration) for each $k$-mer (a similar principle is used to randomly sample $k$-mers in section \ref{sec:simple-sampling}).
+\end{itemize}
+
+A different, but still memory-demanding, approach based on suffix arrays was used in Tallymer software \cite{Kurtz2008}.
+A suffix array is a data structure holding all suffixes of a string sorted in a lexicographical order. Suffixes with identical
+prefixes of length at least $k$ represent different occurrences of a $k$-mer. Since they are stored in a sorted order, 
+abundances of $k$-mers can be computed by grouping adjacent suffixes. 
+
+\subsection{Approximating the Histogram}
+As we drop the requirement to compute the exact histogram, it is no longer necessary to store the abundance of each $k$-mer.
+This provides a way to reduce the amount of required memory from dozens of gigabytes 
+to hundreds of megabytes, allowing these computations to be performed on a personal computer rather than on a cluster.  
+
+To use all data available we must, however, still analyse every $k$-mer of every read so the time complexity of the
+following algorithms will still be at least linear in the number of $k$-mers.
+
+\subsubsection{Simple sampling from $k$-mers}
+\label{sec:simple-sampling}
+The simplest optimization, which was used in a tool KmerGenie \cite{Chikhi2013}, is to sample from the $k$-mers.
+With the parameter $e$, we can choose a hash function $\rho_e: \{A,C,G,T\}^k \rightarrow \{0, 1, \dots, e-1\}$ 
+that uniformly distributes the $k$-mers to $e$ buckets. Afterwards, we can compute the histogram by a naive
+hashing approach or by any other algorithm presented in the previous section \ref{sec:exact-algorithms} using only
+the $k$-mers that hashed to 0. Of all the distinct $k$-mers, only a randomly selected fraction of $1/e$ is considered.
+
+The authors used value $e=1000$ in their experiments. As it can be seen from the experimental data (fig. \ref{img:kmergenie-sampling-accuracy}),
+the approximation closely follows the exact histogram $H$ at abundances with higher values of $h_i$ -- if enough of unique $k$-mers of abundance 
+$i$ were sampled. Fewer $k$-mers reach higher abundances $i$ and thus even fewer of them are sampled, which leads  
+to decreased relative precision of approximation of lower values $h_i$. The authors did not include any analytical bounds of errors, however.
+
+\begin{figure}
+\centerline{\includegraphics[width=1.1\textwidth]{images/kmergenie-sampling-accuracy.pdf}}
+\caption[Accuracy of KmerGenie Sampling]{The accuracy of the sampling method. Reprinted from the original paper \cite{Chikhi2013}. 
+The panels reflect the three datasets. Each plot shows the exact
+histogram curves for $k=51$ (solid black curve), $k=41$ (dash-dot red curve) and $k=61$ (dashed green curve). The approximate (sampled) histogram is
+shown using black dots. Note that $h_i$ is shown on a log-scale, exaggerating the differences at lower $h_i$ values.}
+\label{img:kmergenie-sampling-accuracy}
+\end{figure}
+
+% \subsubsection{Multilevel sampling}
+
+\section{Generative Probabilistic Models}
+
+In this section we mainly focus on a description of a model presented in \cite{Hozza2015, Hozza2016},
+which was implemented in a software CovEst. We also present a few models created by other authors,
+describing the main differences between these models and CovEst.
