@@ -12,7 +12,7 @@
 
 \let\eps=\varepsilon % definujeme si pekne epsilon
 \newtheorem*{definition}{Definition}
-\setcounter{secnumdepth}{3}
+\setcounter{secnumdepth}{2}
 
 \linespread{1.25} % hodnota 1.25 by mala zodpovedat 1.5 riadkovaniu
 
@@ -206,11 +206,22 @@ Supervisor: & \mfskolitel \\
 
 \input introduction.tex 
 
+% Chapter 1
 \input biological-motivation.tex
 
-\input previous-work.tex
+\input genome-size-estimation.tex
 
-\input other-chapters.tex
+\input histogram-computing-methods.tex
+
+\input problem-statement.tex
+
+% Chapter 2
+\input chapter2/kmerlight.tex
+
+\input chapter2/errors-observation.tex
+
+% Chapter 3
+\input covest.tex
 
 \input conclusion.tex
 

@@ -1,8 +1,12 @@
-\chapter{Biological Motivation and K-mer Abundance}
+\chapter{Background and Problem Statement}
+In this chapter we firstly explain the biological context and the reason why is the genome size estimate necessary.
+Then we briefly describe a method for genome size estimation and the algorithms used to preprocess data for the estimation.
+Finally, after the introduction of all fundamental components, we will be able to present the goals of our thesis.
 
-In this chapter we firstly explain the biological context and then we define a k-mer abundance histogram.
+\section{Biological Motivation}
 
-\section{DNA Sequencing}
+\subsection{DNA Sequencing}
+\label{sec:sequencing}
 
 DNA molecules store genetic information in organisms as linear chains of nucleotides.
 Four types of nucleotides can be present in DNA -- Adenine, Cytosine, Guanine and Thymine.
@@ -24,7 +28,7 @@ read incorrectly and so it is considered to be one of three other nucleotides. W
 quantify the fraction of incorrectly read nucleotides. For example, if the sum of lengths of all reads is $10^9$
 and the error rate is $0.02$, we can expect $2 \times 10^7$ nucleotides in reads to be incorrect.
 
-\section{Genome Assembly}
+\subsection{Genome Assembly Problems}
 
 When the reads are retrieved, it is then the task for bioinformatics to assemble the whole genome from many short fragments.
 The genome assembly relies on the overlaps of reads such as in figure \ref{fig:overlapping-reads}:
@@ -69,40 +73,3 @@ creating multiple identical sequences in different parts of genome. The number o
 can be deduced from the coverage of these sequences: if the average coverage of the whole genome 
 is $c$, then a duplicated sequence is expected to be a part of twice as many reads and so to
 have coverage $2c$. A sequence copied three times in the genome is expected to have coverage $3c$.
-
-
-\section{K-mer Abundance Histogram}
-As we mentioned in the previous section, it would be helpful to know some characteristics of a genome before its assembly -- 
-length of genome, coverage, extent and multiplicity of duplicated regions. In the previous years there were a few
-researches concerned with the estimation of some of these characteristics without the need of computationally demanding 
-genome assembly \cite{Hozza2015, Melsted2014, Sivadasan2016}. 
-
-To obtain information from reads, the reads are at first processed into $k$-mers. A $k$-mer is a substring of length exactly $k$.
-Using a read of length $r$ we produce $r-k+1$ $k$-mers. $k$-mers are then used to calculate a compact summary statistic -- $k$-mer 
-abundance histogram. 
-
-\begin{definition}
-A $k$-mer abundance histogram is a sequence $f = f_1, f_2, f_3, \dots f_m$, where $f_i$ is the number of $k$-mers that occur in
-the input set exactly $i$ times and $m$ is the maximum observed abundance.
-\end{definition}
-
-When we consider a genome without duplicated sequences and sequencing without errors, we would expect the histogram
-to reach its maximum at the value of average coverage -- $c$. Most of the locations in genome are covered by $c$ reads,
-and each read of a particular location produces one $k$-mer.
-
-The duplicated sequences in genome should result in other peaks at values $2c, 3c, \dots nc$ and from the relative heights of these peaks, $h_{jc}$,
-we should be able to determine sizes of areas duplicated $j$ times.
-
-The sequencing error rates also change the shape of histogram. With error rate of $1\%$ and $k=21$, about $19\%$ $k$-mers are
-erroneous and thus unique with high probability, creating a notable peak in histogram at value $1$. 
-
-The value of $k$ must be set high enough to prevent two unrelated genome locations from producing the same $k$-mers\footnote{Under
-the assumption that each of \texttt{A, C, G, T} nucleotide occurs at each position with probability $1/4$, we can expect
-$L \cdot 4^{-k}$ \textit{collisions} in a genome of length $L$.}, but with higher values of $k$, each sequencing error affects more $k$-mers.
-% maybe something about repeat sensibility? -- repeats will probably not be relevant
-
-\medskip
-
-There are more methods in bioinformatics that are based on $k$-mers. During the genome assembly, instead of overlaps of reads, the overlaps of $k$-mers are usually
-considered. As the $k$-mer abundance histogram can be calculated in a short time (see Section \ref{sec:algorithms}), it can be also used for
-a selection of an optimal $k$ \cite{Chikhi2013}.
