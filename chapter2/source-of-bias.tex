@@ -1,0 +1,60 @@
+\section{The Source of Approximation Bias}
+\label{sec:source-of-bias}
+
+When an estimate of $f_i$ is calculated, the level $w^*$ is chosen
+to maximize the number of collision-free counters at level $w$ with value $i$, $t_i^{(w)}$. 
+
+$$t_i^{(w)} = |\{T_w[c].v = i ~|~ c \in \{0, \dots, r-1\}\}| ~~~~~~~~~~~~ w^* = \arg\max_w t_i^{(w)}$$
+
+Then the number of counters at this level is converted into the estimate of $f_i$ by multiplying by 
+$2^{w^*} \cdot \left(1 - \frac{1}{r}\right)^{1 - F_0/2^{w^*}}$. 
+
+The reason why the level $w^*$ is selected as it is, is not clearly stated in \cite{Sivadasan2016}. 
+We believe that the authors hoped to minimize the variance of the estimator $\hat f_i$.
+
+\subsection{Analytical $w^*$}
+Let us first revise that by the term $k$-mer we understand a string of $k$ characters. A $k$-mer may occur multiple times in an input stream. 
+If it occurs $i$ times, we say its abundance is $i$. If counter $T_w[c]$ holds value $i$, it means that $i$ occurences of the same $k$-mer were hashed into it.
+We assume that all the collisions are being detected, so the value of the counter equals the abundance of the $k$-mer hashed into it.
+
+Can the level $w^*$ be computed analytically? This level should maximize $E(t_i^{(w)})$, the expected number of collision-free counters holding a value $i$.
+
+But the values $E(t_1^{(w)}), E(t_2^{(w)}), \dots, E(t_m^{(w)})$ are in the same relative ratios at every level. If there are two times more $k$-mers with
+abundance one than the $k$-mers with abundance three, we can also expect two times more counters storing the value one than there are counters storing value three.
+By this argument, maximizing $E(t_i^{(w)})$ means maximizing the number of all collision-free counters at one level.
+
+Let us denote with $p_{cf}$ the probability that one counter is collision-free. Then the expected number of collion-free counters is $r \cdot p_{cf}$.
+Under the assumption of uniform hashing into one of $r$ counters, $p_{cf}$ is a probability that only one of $F_0/2^w$ $k$-mers were hashed into that counter.
+
+The number of distinct $k$-mers hashed into one counter follows a binomial distribution $X \sim \mathrm{Bin}(F_0/2^w, 1/r)$ so $p_{cf}$ is
+$$p_{cf} = P[X=1] = \frac{F_0}{2^w} \cdot \frac{1}{r} \left(1 - \frac{1}{r}\right)^{F_0/2^w - 1}$$
+and the probabilies that a counter is empty ($p_e$) and that a counter holds a collision ($p_c$) can be derived easily as well:
+$$p_e = P[X=0] = \left(1 - \frac{1}{r}\right)^{F_0/2^w} ~~~~~~ p_c = P[X>1] = 1 - p_e - p_{cf}$$
+
+The value of $w^*$ can be obtained by solving $\frac{\mathrm{d}}{\mathrm{d}w}p_{cf} = 0$ or by using the inequalities 
+$p_{cf}^{(w^*)} \geq p_{cf}^{(w^*-1)}, p_{cf}^{(w^*)} \geq p_{cf}^{(w^*+1)}$. 
+
+\medskip
+
+What is most important however, is that the value $w^*$ selected by Kmerlight should not depend on $i$ or $f_i$ 
+and it is expected to be the same for the estimates of all $f_i$.
+
+From one Kmerlight run we extracted the values $w^*$ for different $f_i$ and we present them in the figure \ref{img:w-selected-by-kmerlight}.
+
+\begin{figure}[h]
+%\centerline{\includegraphics[width=1\textwidth, trim={0cm, 0cm, 0cm, 0cm}, clip]{}
+\caption[$w^*$ selected by Kmerlight]{For estimate of each $f_i$ there are seven values of $w^*$, 
+each selected by one instance of seven Kmerlight's sketches. The most of selected levels follow the analytical $w^*$. }
+\label{img:w-selected-by-kmerlight}
+\end{figure}
+
+
+
+\section{Unbiased $f_i$ Estimation}
+\label{sec:unbiased-estimate}
+
+\section{Evaluation of Approximation Variance}
+\label{sec:estimation-variance}
+
+\section{Choice of Kmerlight's parameters}
+\label{sec:parameters-choice}
