@@ -41,7 +41,7 @@ In the following sections we clarify the source of this bias (\ref{sec:source-of
 \begin{figure}
 \centerline{\includegraphics[width=1\textwidth, trim={1.5cm, 0cm, 2.5cm, 1.3cm}, clip]{{images/histogram_errors_L1000000_c50_e0.02_k21_normal}.png}}
 \caption[Comparison of exact and approximated histograms]{Values of exact $f_i$ produced by Jellyfish software (blue)
-and approximated values $\hat f_i$ produced by Kmerlight averaged from 50 trials (orange). The errorbars experss the
+and approximated values $\hat f_i$ produced by Kmerlight averaged from 50 trials (orange). The errorbars express the
 standard deviation of each estimate. Note that columns for $i=1,2$ were trimmed having values $10^7, 10^6$ respectively.}
 \label{img:exact-vs-approximated-histogram}
 \end{figure}
@@ -64,7 +64,7 @@ The drop in both statistics at values $\lambda = 10^5$ is caused by Kmerlight's 
 
 \paragraph{Insensivity to lowest $f_i$}
 Since the hash tables of Kmerlight's sketch are smaller than the number of all $k$-mers, many $k$-mers collide.
-When the $k$-mer frequency $f_i$ reaches a specific boundary (in figure \ref{img:exact-vs-approximated-histogram-log} it seems to be $5 \times 10^3$), 
+When $f_i$, the number of distinct $k$-mers with abundance $i$, reaches a specific boundary (in figure \ref{img:exact-vs-approximated-histogram-log} it seems to be $5 \times 10^3$), 
 the probability that at least one $k$-mer with abundance $i$ becomes stored in a collision-free counter at any level approaches to 0.
 
 As a result, the estimates $\hat f_i$ for the lowest $f_i$ may be based on none or very few counters with value $i$. Two scenarios may occur.
@@ -75,10 +75,10 @@ drastically if a higher level $w^*$ was selected.
 This effect is expected, but we point it out as it may limit the usage of the approximated histogram to some applications.
 
 \begin{figure}
-\centerline{\includegraphics[width=1\textwidth, trim={2cm, 0cm, 2.5cm, 1.3cm}, clip]{{images/histogram_errors_L1000000_c50_e0.02_k21_normal_log}.png}}
+\centerline{\includegraphics[width=1\textwidth, trim={1.5cm, 0cm, 2cm, 1.3cm}, clip]{{images/histogram_errors_L1000000_c50_e0.02_k21_normal_log}.png}}
 \caption[Comparison of exact and approximated histograms in log scale]{Exact (blue) and average approximated (orange) histograms, identical
 to those in figure \ref{img:exact-vs-approximated-histogram}, but displayed in a logarithmic scale with values $i=1, 2$ included. 
-Note the lack of the orange columns where the blue columns reach lower values -- due to hashing collisions, Kmerlight can not estimate $f_i$ lower
+Note the lack of orange columns where blue columns reach lower values -- due to hashing collisions, Kmerlight can not estimate $f_i$ lower
 than $5 \times 10^3$.}
 \label{img:exact-vs-approximated-histogram-log}
 \end{figure}

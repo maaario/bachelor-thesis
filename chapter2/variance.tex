@@ -1,0 +1,77 @@
+\section{Evaluation of Approximation Variance}
+\label{sec:estimation-variance}
+
+In this section we will derive a rough quantitaitve estimate of variance of $ \hat f_i$
+and then support its credibility by experimental results.
+
+\subsection{Derivation of $Var(\hat f_i)$}
+Using the observation that the value $w^*$ chosen by Kmerlight often corresponds
+to the analytical $w^*$ and the observation the value of analytical $w^*$ is a constant
+for all $i=1, 2, \dots, m$, we will approximate Kmerlight's variance by a variance
+of $t_i^{(w)}$ at the analytically calculated level $w^*$. In this section we will denote
+$w^*$ simply as $w$, since we will not use any specific property of $w^*$.
+
+Every $k$-mer that is hashed to the level $w$ can end up 
+in a collision-free counter or can become a part of a collision.
+The probability, that a $k$-mer of abundance $i$ does not experience a collision is
+the probability that no other $k$-mer gets hashed into its counter which is
+$(1 - 1/r)^{F_0/2^w-1}$. Note that this value does not depend on $f_i$.
+
+The number of collision-free $k$-mers is equal the number of collision-free counters
+as each collision-free counter stores a single $k$-mer. Thus we will use the symbol
+$t_i^{(w)}$ to denote both quantities and it holds that 
+$E(t_i^{(w)}) = f_i/2^w \cdot (1 - 1/r)^{F_0/2^w-1}$.
+
+% As the exact probability that from $f_i/2^w$ $k$-mers are exactly $t$
+% collision-free can be expressed as 
+% ${f_i/2^w \choose t} \cdot P[t ~ k\text{-mers do not collide}] \cdot 
+% P[(f_i/2^w - t) ~ k\text{-mers do not collide}]$
+% 
+% $
+% \left(1 - \frac{1}{r}\right)^{F_0/2^w - 1} 
+% \left(1 - \frac{1}{r}\right) \left(1 - \frac{1}{r}\right)^{F_0/2^w - 2} 
+% \left(1 - \frac{2}{r}\right) \left(1 - \frac{1}{r}\right)^{F_0/2^w - 3}
+% {\dots} \left(1 - \frac{t-1}{r}\right) \left(1 - \frac{1}{r}\right)^{F_0/2^w - t}
+% $
+
+\paragraph{Sampling View}
+In order to approximate the variance of estimator $\hat f_i$ we will consider
+$t_i^{(w)}$ to follow a binomial distribution $Bin(f_i, p_s = 1/2^w \cdot (1 - 1/r)^{F_0/2^w-1})$.
+This simplification corresponds a simple sampling process in which we sample each a $k$-mer
+with probability $p_s$ (sampling probability) and we discard each $k$-mer
+with probability $1 - p_s$.
+
+Since a random variable following $Bin(n, p)$ has variance of $np(1-p)$, 
+$Var(t_i^{(w)}) = f_i \cdot p_s \cdot (1-p_s)$. The estimate of $f_i$ is obtained
+as $t_i / p_s$, so
+
+$$ Var(\hat f_i) = Var \left( \frac{t_i}{p_s} \right) = \frac{1}{p_s^2} \cdot Var(t_i) = \frac{f_i \cdot (1 - p_s)}{p_s} $$
+
+\paragraph{Effect of Medians}
+Finally, Kmerlight chooses the estimate $\hat f_i$ as a median of estimates of $t$ 
+independent sketches: $\hat f_i = \mathrm{med}(\hat f_i^{(1)}, \dots \hat f_i^{(t)})$.
+
+To incorporate the effect of medians we will use the claim that for a random
+variable with a density function $f(x)$ and mean $\bar x$ is its sample median
+asymptotically normal:
+
+$$\mathrm{med}(x) ~\dot\sim~ N\left(\bar x, \frac{1}{4nf(\bar x)^2}\right)$$
+
+As the binmoial distribution of $t_i^{(w)}$ is a discrete distribution and does
+not have a density function, we will approximate $Bin(f_i, p_s)$ with
+$N(\mu = f_i p_s, \sigma^2 = f_i p_s(1-p_s))$. The density function of normal distribution
+in the mean is $\frac{1}{\sqrt{2\pi\sigma^2}} e^{-\frac{(\mu - \mu)^2}{2\sigma^2}}$
+which is $\frac{1}{\sqrt{2\pi\sigma^2}}$.
+
+Using the two previous approximations, variance of $\hat f_i$ selected as a median of
+$t$ instances can be derived as follows:
+
+$$ Var(\hat f_i) \approx \left( 4t\frac{1}{2\pi Var(\hat f_i^{(l)})}) \right)^{-1} =
+\frac{2\pi}{4t} Var(\hat f_i^{(l)}) = \frac{2\pi}{4t} \frac{f_i \cdot (1 - p_s)}{p_s}$$ 
+
+
+\subsection{Comparison With Experiments}
+TODO: compare theoretical and exp. variances, compare distributions of $f_i$
+
+\section{Choice of Kmerlight's parameters}
+\label{sec:parameters-choice}
