@@ -38,7 +38,7 @@ The value of $w^*$ can be obtained by differentiation ($\frac{\mathrm{d}}{\mathr
 $p_{cf}^{(w^*)} \geq p_{cf}^{(w^*-1)}, p_{cf}^{(w^*)} \geq p_{cf}^{(w^*+1)}$. 
 By manipulating the inequalities we get
 \begin{equation} \label{eq:wstarbounds}
-\frac{1}{4} \leq \left(1 - \frac{1}{r}\right)^{F_0/2^w} \leq \frac{1}{2}
+\frac{1}{4} \leq \left(1 - \frac{1}{r}\right)^{F_0/2^{w^*}} \leq \frac{1}{2}
 \end{equation}
 
 \medskip
@@ -58,9 +58,12 @@ As an effect 35\% of all $k$-mers are concentrated in $f_1$ and 65\% of $k$-mers
 distributed to other $f_i$. With coverage $c$ the histogram is expected to have 
 approximately $c$ columns which makes $f_2, \dots, f_c$ smaller than $f_1$ by an order of magnitude if the coverage is in order of tens.
 
-The second effect that makes values $f_i$ of higher $i$ smaller, is that to increase 
-$f_1$ only one $k$-mer is needed, but to increase $f_{10}$ by one, ten occurences of
- the same $k$-mer must be added to the input stream.
+The second effect that makes values $f_i$ of higher $i$ smaller, is that
+to increase $f_1$ only one $k$-mer occurence is needed, but to increase $f_{10}$ by one, 
+ten error-free occurences of the same $k$-mer must be added to the input stream. 
+65\% $k$-mer occurences are error-free, but since more occurences are needed for higher $i$,
+the fraction of all distinct $k$-mers with abundance greater than ten consists of less than 
+6.5\% unique $k$-mers.
 
 These two effects combined explain, why is the value $f_1$ a hundred times larger than
 the values of $f_i, i>10$ in the presented experimental data in figures
@@ -78,7 +81,17 @@ $E(t^{(w)}) = r \cdot p_{cf} = F_0 / 2^w \cdot (1 - 1/r)^{F_0/2^w - 1}$ from \re
 From the bounds \ref{eq:wstarbounds} we know that at level $w^*$
 $1/4 \leq (1 - 1/r)^{F_0/2^{w^*}} \leq 1/2$.
 
-By examining the levels $w^*-1$ and $w^*+1$ we learn that the number of collision-free counters at these levels is similar to the number of collision-free counters at level $w^*$. There are two times more $k$-mers hashed into the level $w^*-1$ and 2-4 times more collisions happen. Similarly, two times fewer $k$-mers are hashed to the level $w^*+1$ but 2-4 times less collisions happen.
+By examining the levels $w^*-1$ and $w^*+1$ we learn that the number of collision-free
+counters at these levels is similar to the number of collision-free counters at level $w^*$. 
+There are two times more $k$-mers hashed into the level $w^*-1$ but since more collisions
+happen here, only $1/4$ to $1/16$ of $k$-mers are collision-free. Similarly, two times fewer
+$k$-mers are hashed to the level $w^*+1$ and less collisions happen there which makes 
+$1/\sqrt{2}$ to $1/2$ of them collision-free. If we consider $c = F_0/2^{w^*} \cdot (1-1/r)^{-1}$,
+we can summarize the similarity of levels as follows:
+$$E(t^{(w^*)}) \in \left\langle \frac{1}{2}c, \frac{1}{4}c  \right\rangle ~~~~
+E(t^{(w^*-1)}) \in \left\langle \frac{1}{2}c, \frac{1}{8}c  \right\rangle ~~~~
+E(t^{(w^*+1)}) \in \left\langle \frac{1}{2\sqrt{2}}c, \frac{1}{4}c  \right\rangle
+$$
 
 As a result of high variance of $t_i^{(w)}$ and close values of $E(t^{(w^*-1)}), 
 E(t^{(w^*)}),E(t^{(w^*+1)})$, any of these levels could hold the maximal $t_i^{(w)}$ 
@@ -93,7 +106,7 @@ display the values of $p_{cf} = E(t^{(w)}) / r, p_e, p_c$ for different levels i
 figure \ref{img:pe-pcf-pc}. These probabilities represent the fractions of 
 collision-free, empty and collided counters respectively. 
 
-\begin{figure}
+\begin{figure}[h]
 \centerline{\includegraphics[width=0.8\textwidth, trim={0cm, 3.5cm, 0cm, 0cm}, clip]{images/pcf.png}}
 \caption[Plot of $p_e, p_{cf}, p_c$ across the levels]{The values of $p_e, p_{cf}, p_c$ 
 represent the theoretical fractions of empty, collision-free and collided counters in

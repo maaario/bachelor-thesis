@@ -8,32 +8,34 @@ Finally, after the introduction of all fundamental components, we will be able t
 \subsection{DNA Sequencing}
 \label{sec:sequencing}
 
-DNA molecules store genetic information in organisms as linear chains of nucleotides.
-Four types of nucleotides can be present in DNA -- Adenine, Cytosine, Guanine and Thymine.
+DNA molecules store genetic information in cells in the form of long linear or circular chains of nucleotides.
+Four types of nucleotides can be present in DNA -- adenine, cytosine, guanine and thymine.
 Therefore, we can represent a DNA molecule as a sequence of characters \texttt{A, C, G, T}.
 
-The whole genetic information of an organism, stored in a few DNA molecules, is called a genome.
+The whole genetic information of an organism, stored in several DNA molecules, is called a genome.
 Genome sizes range from thousands of nucleotides in viruses up to hundreds of billions nucleotides in some plants.
-Length of a human genome is known to be around 3.2 billion nucleotides.
+The length of a human genome is known to be around 3.2 billion nucleotides.
 
-In a sequencing process we try to obtain a nucleotide sequence of DNA. Current technologies can, however, read only
-short segments of a nucleotide chain, producing reads of length 100--1000 nucleotides, depending on technology used. 
+In a sequencing process we try to obtain a nucleotide sequence of DNA from a given biological sample. 
+Current technologies can, however, read only
+short segments of a nucleotide chain, producing reads of length 100--1000 nucleotides, depending on the technology used. 
 In a sequencing experiment, the DNA is at first randomly fragmented to shorter pieces. Then the ends of these pieces
-are sequenced, producing two reads from one fragment. Therefore, each read originates from a specific but unknown location in genome. 
-Since every read is a segment of DNA, it can also be represented as a string of \texttt{A, C, G, T} characters.
+are sequenced, producing two reads from one fragment. Therefore, each read originates from a specific but unknown
+location in the genome. Since every read is a segment of DNA, it can also be represented as a string of
+\texttt{A, C, G, T} characters.
 
 There are multiple factors that affect the quality of reads, but we will mostly consider only one type of errors: 
 a single nucleotide substitutions caused by sequencer itself. Occasionaly a nucleotide of DNA is
 read incorrectly and so it is considered to be one of three other nucleotides. We use the term error rate to
 quantify the fraction of incorrectly read nucleotides. For example, if the sum of lengths of all reads is $10^9$
-and the error rate is $0.02$, we can expect $2 \times 10^7$ nucleotides in reads to be incorrect.
+and the error rate is $0.02$, we can expect $2 \times 10^7$ nucleotides in thr reads to be incorrect.
 
 \subsection{Genome Assembly Problems}
 
 When the reads are retrieved, it is then the task for bioinformatics to assemble the whole genome from many short fragments.
 The genome assembly relies on the overlaps of reads such as in figure \ref{fig:overlapping-reads}:
-when suffix of one read is identical to prefix of another read, they presumably originate from locations in genome close to each other,
-and thus can be joined to form a longer sequence.
+if a suffix of one read is identical to a prefix of another read, they presumably originate from overlapping
+locations in the genome, and thus can be joined to form a longer sequence.
 
 \begin{figure}[h]
 \centering
@@ -50,25 +52,27 @@ genomic sequence:    CCGACGTCCACCTGTGATCGGATG
 
 Without a large enough number of reads, the reconstruction of genome would not be possible.
 Not only that the reads should cover the whole length of the genome, but there should also be a sufficient number of read overlaps.
-In other words, each location in genome should be a part of multiple reads. The average number of reads covering each nucleotide
+In other words, each location in the genome should be a part of multiple reads. The average number of reads covering each nucleotide
 is called coverage. %Under the assumption that the reads are distributed uniformly across the genome, the average coverage can be
 %computed as a fraction of sum of lengths of all reads and the genome size. 
 
-In order to achieve a successful assembly, the preceding sequencing must produce reads with sufficiently high coverage.
-And to know the amount of reads that should be produced, we must first estimate the genome length. We can base the
-estimate on genomes of related species. A different approach would be to sequence the genome in a preliminary experiment,
-estimate the coverage and the genome length and then continue the sequencing process until a desired coverage is achieved.
+Since the source locations of reads are randomly distributed over the genome, even at high coverage
+some areas of the genome can remain unsequenced thus preventing complete assembly.
 
-However, since the source locations of reads are randomly distributed over the genome, even at high coverage
-some areas of genome can remain unsequenced thus preventing complete assembly.
+In order to estimate the number of reads necessary for a cerain coverage, we must first estimate the genome length. 
+We can base the estimate on the known genomes of related species. A different approach would be to sequence
+the genome in a preliminary experiment, estimate the coverage and the genome length and then continue the
+sequencing process until a desired coverage is achieved.
 
 \medskip
 
-Another complication in assembly is caused by repeating sequences. Large areas of genome consist of short sequences repeated many times.
-When we obtain reads \texttt{TATATA, ATATAT, ATATA}, their shortest combination \texttt{TATATAT} may not correspond with the original sequence in genome.
-If the length of the sequence is known beforehand, the number of repeats can be deduced from it.
+% Another complication in assembly is caused by repeating sequences. Large areas of genome consist of
+% short sequences repeated many times. When we obtain reads \texttt{TATATA, ATATAT, ATATA}, their
+% shortest combination \texttt{TATATAT} may not correspond with the original sequence in 
+% genome. If the length of the sequence is known beforehand, the number of repeats can be deduced from it.
 
-During the evolution, even longer segments can be copied to different locations, 
+% TODO: put coverage things to genome estimation
+During the evolution, long segments of DNA can be copied to different locations, 
 creating multiple identical sequences in different parts of genome. The number of copies present 
 can be deduced from the coverage of these sequences: if the average coverage of the whole genome 
 is $c$, then a duplicated sequence is expected to be a part of twice as many reads and so to
