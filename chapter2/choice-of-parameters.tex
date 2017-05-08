@@ -1,0 +1,43 @@
+\section{Choice of Kmerlight's parameters}
+\label{sec:parameters-choice}
+
+As we have noted in the first section of this chapter (\ref{sec:kmerlight})
+the authors of the original paper about Kmerlight \cite{Sivadasan2016} have
+provided us with theoretical bounds of Kmerlight's errors in the following form:
+Kmerlight computes estimates $\hat f_i$ (and $\hat F_0$) for sufficiently large $f_i$ ($f_i \geq F_0 / \lambda$)
+with an error $(1-\eps)f_i \leq \hat f_i \leq (1+\eps)f_i$ with probability at least $1 - \delta$.
+
+It is unclear, however, how to set the parameters $r$ (the number of counters at one level) 
+and $t$ (the number of sketch instances for median estimate).
+
+In this section we use the approximate distribution of Kmerlight's errors (derived in the
+previous section \ref{sec:estimation-variance}) to set the parameters in order to achieve
+desired error bounded by $\eps$ with probability $1-\delta$.
+
+\paragraph{Prediction/confidence interval} To gain the error bounds
+ in the
+aforementioned form we derive a prediction interval of $\hat f_i$. 
+
+By standardization we get $(\hat f_i - f_i)/\sigma \dot\sim N(0,1)$ and so it holds that
+$$P\left[-u\left(\frac{\alpha}{2}\right) \leq \frac{\hat f_i - f_i}{\sigma} \leq u\left(\frac{\alpha}{2}\right) \right] \approx 1 - \alpha$$
+where $u$ is the critical value of the normal distribution. This formula can be simply
+manipulated to yield the bounds for $\hat f_i$:
+$$P\left[\left(1-u\left(\frac{\alpha}{2}\right)\sigma/f_i\right) f_i \leq \hat f_i \leq \left(1-u\left(\frac{\alpha}{2}\right)\sigma/f_i\right) f_i \right] \approx 1 - \alpha$$
+From this form we can set $\eps = u\left(\frac{\alpha}{2}\right)\sigma/f_i$.
+
+\paragraph{Simultanous intervals} Since we would like to compute the estimates
+for multiple ($m$) values of $f_i$, to achieve the bounded error with probability
+$1 - \delta$, we set $\alpha = \frac{\delta}{m}$ following Bonferroni correction.
+
+\medskip
+
+Let us finish this section by describing the method that can be used to choose the suitable parameters for Kmerlight.
+
+Standard deviation $\sigma$ can be calculated by equation \ref{eq:variance} using $F_0, f_i, r, t$. 
+Note that $\sigma$ depends logarithmically on $F_0$ and thus a very rough estimate of $F_0$ should
+be sufficient for parameter setting. We can demand the bounded precision only for sufficiently large $f_i$ by setting 
+$f_i = F_0/\lambda$ ($\lambda=1000$ for example). The estimates of larger $f_i$ will be more precise.
+
+Using the relation $\eps = u\left(\frac{\alpha}{2}\right)\sigma/f_i$ we can now directly calculate $\eps$
+for a desired probability $\delta$ and the parameters $r, t, \lambda$. This result allows us to tweak
+the parameters $r, t$ to achieve the desired precision.

@@ -6,7 +6,7 @@ and then support its credibility by experimental results.
 
 \subsection{Derivation of $Var(\hat f_i)$}
 Using the observation that the value $w^*$ chosen by Kmerlight often corresponds
-to the analytical $w^*$ and the observation the value of analytical $w^*$ is a constant
+to the analytical $w^*$ and the observation that the value of analytical $w^*$ is a constant
 for all $i=1, 2, \dots, m$, we will approximate Kmerlight's variance by a variance
 of $t_i^{(w)}$ at the analytically calculated level $w^*$. In this section we will denote
 $w^*$ simply as $w$, since we will not use any specific property of $w^*$.
@@ -66,12 +66,53 @@ which is $\frac{1}{\sqrt{2\pi\sigma^2}}$.
 Using the two previous approximations, variance of $\hat f_i$ selected as a median of
 $t$ instances can be derived as follows:
 
-$$ Var(\hat f_i) \approx \left( 4t\frac{1}{2\pi Var(\hat f_i^{(l)})}) \right)^{-1} =
-\frac{2\pi}{4t} Var(\hat f_i^{(l)}) = \frac{2\pi}{4t} \frac{f_i \cdot (1 - p_s)}{p_s}$$ 
+\begin{equation} \label{eq:variance}
+Var(\hat f_i) \approx \left( 4t\frac{1}{2\pi Var(\hat f_i^{(l)})}) \right)^{-1} =
+\frac{2\pi}{4t} Var(\hat f_i^{(l)}) = \frac{\pi}{2t} \frac{f_i \cdot (1 - p_s)}{p_s}
+\end{equation}
 
 
 \subsection{Comparison With Experiments}
-TODO: compare theoretical and exp. variances, compare distributions of $f_i$
+For low $f_i$, a very small number of $k$-mers hash into collision-free counters at level $w^*$.
+Therefore the estimator $\hat f_i$ can reach only a limited set of discrete values (0 if no $k$-mer
+survives collisions, 1000 if one $k$-mer is in collision-free counter, 2000 if two $k$-mers survive, \dots),
+and the approximation with normal distribution is not precise for $i \in \{ 5, 6, \dots, 14, 15, 40, 41, \dots\}$.
 
-\section{Choice of Kmerlight's parameters}
-\label{sec:parameters-choice}
+For higher $f_i$, the estimator $\hat f_i$ reaches various values and the approximation with normal distribution
+seems reasonable, as it can be seen from figures \ref{img:estimated-pdf} and \ref{img:estimated-cdf}.
+These figures show the densities and distribution functions respectively for eight different histogram columns.
+
+We also tried to apply Kolmogorov-Smirnov tests to test the normality of $\hat f_i$. The discrete values of $\hat f_i$
+create steps in the cumulative distribution function and therefore these tests reject the normality hypothesis
+for the columns with fewer $k$-mers. The hypotheses hold for $f_i > 40000$ ($i \in \{1,2,3,20,21, \dots, 30\}$). 
+
+Nevertheless, in the figures \ref{img:estimated-pdf}, \ref{img:estimated-cdf} it can be
+seen that even though the approximation with normal distribution is not precise for the
+least frequent abundancies, the $\hat f_i$ can be approximated by gaussian.
+
+\begin{figure}[h]
+\centerline{\includegraphics[width=1\textwidth, trim={0cm, 0cm, 0cm, 0cm}, clip]{images/estimated-pdf.png}}
+\caption[Density functions of $\hat f_i$]{Probability density (blue histogram), best normal fit (orange line),
+theoretical estimate (green) of the distribution of $\hat f_i$. The histogram comes from 300 runs of Kmerlight
+with seven instances ($t=7$) and with fixed value of $w^*$. The theoretical prediction uses only the estimated values of 
+$f_i$ and $F_0$ to calculate variance that is subsequently used as a parameter for a normal distribution.}
+\label{img:estimated-pdf}
+\end{figure}
+
+\begin{figure}[h]
+\centerline{\includegraphics[width=1\textwidth, trim={0cm, 0cm, 0cm, 0cm}, clip]{images/estimated-cdf.png}}
+\caption[Distribution functions of $\hat f_i$]{Cumulative distribution funcion (blue), theoretical estimate (orange).}
+\label{img:estimated-cdf}
+\end{figure}
+
+Finally we present the comparison of the Kmerlight's variance and its theoretical prediction in the
+figure \ref{img:std-theory}. Note that our theoretical approximation is based on the fixed value of
+level $w^*$ but can also be applied on the original Kmerlight algorithm. 
+
+\begin{figure}[h]
+\centerline{\includegraphics[width=0.9\textwidth, trim={0cm, 3.5cm, 0cm, 0cm}, clip]{images/std_deviations_comparison_theory.png}}
+\caption[Experimental and theoretical variance of Kmerlight]{The blue and orange points show standard deviations of $\hat f_i$
+computed by original and improved Kmerlight respectively as in the figure \ref{img:std-new-algorithm}. The green line 
+represents the approximation of variance calculated with \ref{eq:variance}.}
+\label{img:std-theory}
+\end{figure}
