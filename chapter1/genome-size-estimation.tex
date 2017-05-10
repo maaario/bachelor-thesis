@@ -1,39 +1,65 @@
 \section{Genome Size Estimation}
-As we mentioned in the previous section, it would be helpful to know some characteristics of a genome before its assembly -- 
-length of genome, coverage, extent and multiplicity of duplicated regions. In the previous years there were a few
-researches concerned with the estimation of some of these characteristics without the need of computationally demanding 
-genome assembly \cite{Hozza2015, Melsted2014, Sivadasan2016}. 
+\label{sec:intro-estimation}
+As we mentioned in section \ref{sec:assembly}, it would be helpful to know the length of a genome 
+before its assembly. Furthermore, we might also be interested in other genome cahractersitics,
+such as the extent and multiplicity of its duplicated regions.
 
-\subsection{K-mer Abundance Histogram}
-\label{sec:histogram}
-To obtain information from reads, the reads are at first processed into $k$-mers. A $k$-mer is a substring of length exactly $k$.
-Using a read of length $r$ we produce $r-k+1$ $k$-mers. $k$-mers are then used to calculate a compact summary statistic -- $k$-mer 
-abundance histogram. 
-
-\begin{definition}
-A $k$-mer abundance histogram is a sequence $f = f_1, f_2, f_3, \dots f_m$, where $f_i$ is the number of $k$-mers that occur in
-the input set exactly $i$ times and $m$ is the maximum observed abundance.
-\end{definition}
-
-When we consider a genome without duplicated sequences and sequencing without errors, we would expect the histogram
-to reach its maximum at the value of average coverage -- $c$. Most of the locations in genome are covered by $c$ reads,
-and each read of a particular location produces one $k$-mer.
-
-The duplicated sequences in genome should result in other peaks at values $2c, 3c, \dots nc$ and from the relative heights of these peaks, $h_{jc}$,
-we should be able to determine sizes of areas duplicated $j$ times.
-
-The sequencing error rates also change the shape of histogram. With error rate of $1\%$ and $k=21$, about $19\%$ $k$-mers are
-erroneous and thus unique with high probability, creating a notable peak in histogram at value $1$. 
-
-The value of $k$ must be set high enough to prevent two unrelated genome locations from producing the same $k$-mers\footnote{Under
-the assumption that each of \texttt{A, C, G, T} nucleotide occurs at each position with probability $1/4$, we can expect
-$L \cdot 4^{-k}$ \textit{collisions} in a genome of length $L$.}, but with higher values of $k$, each sequencing error affects more $k$-mers.
-% maybe something about repeat sensibility? -- repeats will probably not be relevant
+In the previous years there were several researches concerned with the estimation 
+of these characteristics without the need of computationally demanding 
+genome assembly \cite{Hozza2015, Williams2013, Melsted2014, Sivadasan2016}, using only the $k$-mer 
+abundance histogram.
 
 \medskip
 
-There are more methods in bioinformatics that are based on $k$-mers. During the genome assembly, instead of overlaps of reads, the overlaps of $k$-mers are usually
-considered. As the $k$-mer abundance histogram can be calculated in a short time (see Section \ref{sec:algorithms}), it can be also used for
-a selection of an optimal $k$ \cite{Chikhi2013}.
+Let us summarize the parameters of the genome in Table \ref{tab:genome-parameters}.
+Then we will describe how different genome characteristics influence the shape of the histogram,
+and how these parameters can be estimated from the histogram. We use the assumption that
+the reads are distributed uniformly across the genome. 
 
-\subsection{Estimation Method -- CovEst}
+\begin{table}[h!]
+\centering
+\begin{tabular}{ l l l }
+ $L$ & genome size & the number of nucleotides in the genome \\  
+ $l$ & read length & the number of nucleotides in one read \\
+ $c$ & coverage & an average number of reads covering each genome position \\ 
+ $e$ & error rate & probability that a single nucleotide was read incorrectly   
+\end{tabular}
+\caption{A set of simple genome parameters as described in the section \ref{sec:sequencing}.
+\label{tab:genome-parameters}}
+\end{table}
+
+When we consider a genome without duplicated sequences and sequencing without errors, we
+would expect the histogram to reach its maximum at the abundance $c$. 
+Most of the locations in genome are covered by $c$ reads, and each read of a particular
+location produces one occurence of a $k$-mer, thus contributing to $f_c$.
+
+Note that the average coverage is a fraction of the sum of lengths of all reads
+and the genome size ($c = n \cdot l/L$, if $n$ denotes the number of all reads). 
+Since the sum of lengths of reads is known, with the knowledge of coverage we can estimate the 
+genome size, and conversely, with the knowledge of genome size we can estimate the coverge.
+
+\medskip
+
+If the average coverage of the whole genome is $c$, then a duplicated sequence is expected 
+to be a part of twice as many reads as a unique sequence, and so to have coverage $2c$. 
+A sequence copied three times in the genome is expected to have coverage $3c$.
+The number of copies present can be thus deduced from the positions of peaks in the histogram,
+expected at abundances $2c, 3c, \dots nc$ and the extents of copied regions can be deduced
+from the relative heights of these peaks $f_{2c}, f_{3c}, \dots f_{nc}$.
+
+\medskip
+ 
+The sequencing error rates also change the shape of histogram. With error rate of $1\%$ 
+and $k=21$, about $19\%$ of $k$-mer occurences are erroneous and thus unique with high probability, 
+creating a notable peak in histogram at value one. From the height of $f_1$, the error rate
+can be estimated.
+
+\medskip
+
+The aforementioned characteristics lay out the basis of $k$-mser abundance histogram analysis.
+Approaches introduced in the previous work \cite{Hozza2015, Williams2013, Melsted2014,
+Sivadasan2016} use probabilistic generative models that can generate the
+expected shape of the histogram based on several parameters. These parameters are chosen
+and optimized to produce a histogram most alike to the observed one.
+We will provide a more detailed description of one such model, CovEst \cite{Hozza2015, Hozza2016},
+in the section \ref{sec:covest}.

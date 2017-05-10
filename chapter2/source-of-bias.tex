@@ -14,8 +14,7 @@ We believe that the authors hoped to minimize the variance of the estimator $\ha
 
 \subsection{Collision-free Counters and Analytical $w^*$}
 \label{sec:analytical-w}
-Let us first revise that by the term $k$-mer we understand a string of $k$ characters. A $k$-mer may occur multiple times in an input stream. 
-If it occurs $i$ times, we say its abundance is $i$. If counter $T_w[c]$ holds value $i$, it means that $i$ occurences of the same $k$-mer were hashed into it.
+If counter $T_w[c]$ holds value $i$, it means that $i$ occurences of the same $k$-mer were hashed into it.
 We assume that all the collisions are being detected, so the value of the counter equals the abundance of the $k$-mer hashed into it.
 
 Can the level $w^*$ be computed analytically? This level should maximize $E(t_i^{(w)})$, the expected number of collision-free counters holding the value $i$.
@@ -46,28 +45,6 @@ By manipulating the inequalities we get
 Apart from our ability to calculate $w^*$ and $p_{cf}$, an important outcome of
 this section is the observation that the value $w^*$ selected by Kmerlight should not
 depend on $i$ or $f_i$ and it is expected to be the same for the estimates of all $f_i$.
-
-\subsection{The Problematic Data}
-Kmerlight guarantees precise estimation for $f_i$ with values close to $F_0$.
-Unfortunately, in the sequencing data, values of $f_i$ for $i > 1$ are considerably 
-smaller than $F_0 \sim f_1$. This is mainly caused by sequencing errors and also
-by the nature of the histogram.
-
-With sequencing error rate of 2\%, 35\% $k$-mers are erroneous and thus unique with high probability.
-As an effect 35\% of all $k$-mers are concentrated in $f_1$ and 65\% of $k$-mers are
-distributed to other $f_i$. With coverage $c$ the histogram is expected to have 
-approximately $c$ columns which makes $f_2, \dots, f_c$ smaller than $f_1$ by an order of magnitude if the coverage is in order of tens.
-
-The second effect that makes values $f_i$ of higher $i$ smaller, is that
-to increase $f_1$ only one $k$-mer occurence is needed, but to increase $f_{10}$ by one, 
-ten error-free occurences of the same $k$-mer must be added to the input stream. 
-65\% $k$-mer occurences are error-free, but since more occurences are needed for higher $i$,
-the fraction of all distinct $k$-mers with abundance greater than ten consists of less than 
-6.5\% unique $k$-mers.
-
-These two effects combined explain, why is the value $f_1$ a hundred times larger than
-the values of $f_i, i>10$ in the presented experimental data in figures
-\ref{img:exact-vs-approximated-histogram} and \ref{img:exact-vs-approximated-histogram-log}.
 
 \subsection{Explanation of Bias}
 Since the ratio $f_i / F_0$ is very low for $i>1$ and this ratio determines

@@ -1,40 +1,49 @@
 \chapter{Background and Problem Statement}
-In this chapter we firstly explain the biological context and the reason why is the genome size estimate necessary.
-Then we briefly describe a method for genome size estimation and the algorithms used to preprocess data for the estimation.
-Finally, after the introduction of all fundamental components, we will be able to present the goals of our thesis.
+In this chapter we firstly explain the biological context and the reason why is 
+the genome size estimate necessary. Then we define a $k$-mer abundance histogram
+and algorithms used to compute this histogram exactly and approximately.
+Finally, we briefly describe a method for genome size estimation and we will be
+able to present the goals of our thesis.
 
 \section{Biological Motivation}
 
 \subsection{DNA Sequencing}
 \label{sec:sequencing}
 
-DNA molecules store genetic information in cells in the form of long linear or circular chains of nucleotides.
-Four types of nucleotides can be present in DNA -- adenine, cytosine, guanine and thymine.
-Therefore, we can represent a DNA molecule as a sequence of characters \texttt{A, C, G, T}.
+DNA molecules store genetic information in cells in the form of long linear or circular chains
+of nucleotides. Four types of nucleotides can be present in DNA -- adenine, cytosine, guanine
+and thymine. Therefore, we can represent a DNA molecule as a sequence of characters
+\texttt{A, C, G, T}.
 
 The whole genetic information of an organism, stored in several DNA molecules, is called a genome.
-Genome sizes range from thousands of nucleotides in viruses up to hundreds of billions nucleotides in some plants.
-The length of a human genome is known to be around 3.2 billion nucleotides.
+Genome sizes range from thousands of nucleotides in viruses up to hundreds of billions
+nucleotides in some plants. The length of a human genome is known to be around
+3.2 billion nucleotides.
 
-In a sequencing process we try to obtain a nucleotide sequence of DNA from a given biological sample. 
-Current technologies can, however, read only
-short segments of a nucleotide chain, producing reads of length 100--1000 nucleotides, depending on the technology used. 
-In a sequencing experiment, the DNA is at first randomly fragmented to shorter pieces. Then the ends of these pieces
-are sequenced, producing two reads from one fragment. Therefore, each read originates from a specific but unknown
-location in the genome. Since every read is a segment of DNA, it can also be represented as a string of
+In a sequencing process we try to obtain a nucleotide sequence of DNA from
+a given biological sample. We will focus on the next generation sequencing technologies
+that can read only short segments of a nucleotide chain, producing reads of length 100--1000
+nucleotides, depending on the specific technology used.
+
+In a sequencing experiment, the DNA is at first randomly fragmented to shorter pieces.
+Then the ends of these pieces are sequenced, producing two reads from one fragment. 
+Therefore, each read originates from a specific but unknown location in the genome. 
+Since every read is a segment of DNA, it can also be represented as a string of
 \texttt{A, C, G, T} characters.
 
-There are multiple factors that affect the quality of reads, but we will mostly consider only one type of errors: 
-a single nucleotide substitutions caused by sequencer itself. Occasionaly a nucleotide of DNA is
-read incorrectly and so it is considered to be one of three other nucleotides. We use the term error rate to
-quantify the fraction of incorrectly read nucleotides. For example, if the sum of lengths of all reads is $10^9$
-and the error rate is $0.02$, we can expect $2 \times 10^7$ nucleotides in thr reads to be incorrect.
+There are multiple factors that affect the quality of reads, but we will mostly consider only
+one type of errors: a single nucleotide substitutions caused by sequencer itself. Occasionaly
+a nucleotide of DNA is read incorrectly and so it is considered to be one of three
+other nucleotides. We use the term error rate to quantify the fraction of incorrectly
+read nucleotides. For example, if the sum of lengths of all reads is $10^9$ and the error
+rate is $0.02$, we can expect $2 \times 10^7$ nucleotides in the reads to be incorrect.
 
 \subsection{Genome Assembly Problems}
-
-When the reads are retrieved, it is then the task for bioinformatics to assemble the whole genome from many short fragments.
-The genome assembly relies on the overlaps of reads such as in figure \ref{fig:overlapping-reads}:
-if a suffix of one read is identical to a prefix of another read, they presumably originate from overlapping
+\label{sec:assembly}
+When the reads are retrieved, it is then the task for bioinformatics to assemble the
+whole genome from many short fragments. The genome assembly relies on the overlaps
+of reads such as in figure \ref{fig:overlapping-reads}: if a suffix of one read is
+identical to a prefix of another read, they presumably originate from overlapping
 locations in the genome, and thus can be joined to form a longer sequence.
 
 \begin{figure}[h]
@@ -51,29 +60,27 @@ genomic sequence:    CCGACGTCCACCTGTGATCGGATG
 \end{figure}
 
 Without a large enough number of reads, the reconstruction of genome would not be possible.
-Not only that the reads should cover the whole length of the genome, but there should also be a sufficient number of read overlaps.
-In other words, each location in the genome should be a part of multiple reads. The average number of reads covering each nucleotide
-is called coverage. %Under the assumption that the reads are distributed uniformly across the genome, the average coverage can be
-%computed as a fraction of sum of lengths of all reads and the genome size. 
+Not only that the reads should cover the whole length of the genome, but there should also
+be a sufficient number of read overlaps. In other words, each location in the genome should
+be a part of multiple reads. The average number of reads covering each nucleotide
+is called coverage. 
 
 Since the source locations of reads are randomly distributed over the genome, even at high coverage
 some areas of the genome can remain unsequenced thus preventing complete assembly.
 
-In order to estimate the number of reads necessary for a cerain coverage, we must first estimate the genome length. 
-We can base the estimate on the known genomes of related species. A different approach would be to sequence
-the genome in a preliminary experiment, estimate the coverage and the genome length and then continue the
-sequencing process until a desired coverage is achieved.
+In order to estimate the number of reads necessary for a cerain coverage, we must first
+estimate the genome length. We can base the estimate on the known genomes of related species.
+A different approach would be to sequence the genome in a preliminary experiment, 
+estimate the coverage and the genome length and then continue the sequencing process
+until a desired coverage is achieved.
 
 \medskip
 
-% Another complication in assembly is caused by repeating sequences. Large areas of genome consist of
-% short sequences repeated many times. When we obtain reads \texttt{TATATA, ATATAT, ATATA}, their
-% shortest combination \texttt{TATATAT} may not correspond with the original sequence in 
-% genome. If the length of the sequence is known beforehand, the number of repeats can be deduced from it.
+But the genome assembly problems do not end with sufficiently high coverage.
+For example, during the evolution, long segments of DNA can be copied to different locations, 
+creating multiple identical sequences in different parts of genome. 
 
-% TODO: put coverage things to genome estimation
-During the evolution, long segments of DNA can be copied to different locations, 
-creating multiple identical sequences in different parts of genome. The number of copies present 
-can be deduced from the coverage of these sequences: if the average coverage of the whole genome 
-is $c$, then a duplicated sequence is expected to be a part of twice as many reads and so to
-have coverage $2c$. A sequence copied three times in the genome is expected to have coverage $3c$.
+In section \ref{sec:intro-estimation} we will describe a method that can estimate
+the genome size and also other characteristics such as coverage and extent and multiplicity
+of duplicated regions without the need of genome assembly, but this method uses a summary 
+statistic called $k$-mer abundance histogram.

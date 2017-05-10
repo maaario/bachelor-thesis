@@ -1,89 +1,132 @@
 \chapter{Analysis and Improvement of Kmerlight}
-In this chapter we first present a detailed description of an exising algorithm Kmerlight \cite{Sivadasan2016}
-which computes an approximated $k$-mer abundance histogram.
+\label{sec:chapter2}
+In this chapter we first present a detailed description of an exising algorithm
+Kmerlight \cite{Sivadasan2016} which computes an approximated $k$-mer abundance histogram.
 
-Aftewards we investigate the character of inaccuracies of the estimated histogram and we present a novel
-estimate of error variance. As we discover a systematic estimation bias, we alter Kmerlight to produce
-unbiased histogram estimates. 
+Aftewards we investigate the character of inaccuracies of the estimated histogram, and we present
+a novel estimate of error variance. As we discover a systematic estimation bias, we alter
+Kmerlight to produce unbiased histogram estimates. 
 
 \section{Kmerlight}
 \label{sec:kmerlight}
 The input expected by Kmerlight is a collection of $ACGT$ sequences (reads).
 Kmerlight transforms reads into $k$-mers, as it was described in \ref{sec:histogram}
 and then processes a stream of $k$-mers. Kmerlight maintains a sketch of previously
-processed $k$-mers and updates the sketch with each $k$-mer. The estimates of $F_0$ ($F_0 = \sum_{i=1}^{m} f_i$)
-and $f_i$ are computed from the content of the sketch in the end. The output consists
-of values $\hat F_0, \hat f_1, \hat f_2, \dots, \hat f_m$.
+processed $k$-mers and updates the sketch with each $k$-mer. The estimates 
+of $F_0$ ($F_0 = \sum_{i=1}^{m} f_i$) and $f_i$ are computed from the content of
+the sketch in the end. The output consists of values $\hat F_0, \hat f_1, 
+\hat f_2, \dots, \hat f_m$.
 
-Kmerlight's sketch consists of $W=64$ levels. There is a hash table $T_w$ at each level $w$ with $r$ counters -- $T_w[0], T_w[1], \dots, T_w[r-1]$.
-Each counter $c$ stores its value $T_w[c].v$ (number of elements stored in the counter) and an auxiliary information $T_w[c].p$ from within a range
-$0, \dots, u-1$.
+Kmerlight's sketch consists of $W=64$ levels. There is a hash table $T_w$ at each level 
+$w$ with $r$ counters $T_w[0], T_w[1], \dots, T_w[r-1]$.
+Each counter $c$ stores its value $T_w[c].v$ (the number of elements stored in the counter)
+and an auxiliary information $T_w[c].p$ from within a range $0, \dots, u-1$.
 
 
 \paragraph{Update}
 \begin{itemize}
-\item For a distinct $k$-mer, its level is selected so that the probablity that level $w$ is selected is $1/2^w$. The $k$-mer is hashed
-into a random integer of $W$ bits and the number of trailing zeroes determines the level $w$, thus all occurences of the same
+\item For a distinct $k$-mer, its level is selected so that the probablity of selecting 
+level $w$ is $1/2^w$. In particular, the $k$-mer is hashed into an integer of $W$ bits 
+and the number of trailing zeroes determines the level $w$. Thus all occurences of the same
 $k$-mer will be placed to the same level $w$.
 
-\item Next, using a different hash function $h: \{A, C, G, T\}^k \rightarrow \{ 0, \dots, r-1\} \times \{ 0, \dots, u-1\}$, the $k$-mer is hashed 
-into a pair $(c, j)$. 
+\item Next, using a different hash function
+$h: \{A, C, G, T\}^k \rightarrow \{ 0, \dots, r-1\} \times \{ 0, \dots, u-1\}$, 
+the $k$-mer is hashed into a pair $(c, j)$. 
 \begin{itemize}
-\item If the counter $c$ at level $w$ is empty, its value is increased to 1 and $j$ is stored as an auxiliary information.
-\item If the counter $T_w[c]$ is not empty, but the auxiliary information in $T_w[c].p$ is equal to $j$, the counter value $T_w[c].v$ is increased.
+\item If the counter $c$ at level $w$ is empty, its value is increased to 1 and $j$
+is stored as an auxiliary information  $T_w[c].p$.
+\item If the counter $T_w[c]$ is not empty, but the auxiliary information in $T_w[c].p$ 
+is equal to $j$, the counter value $T_w[c].v$ is increased.
 \item Finally, if $T_w[c].p \neq j$, the counter is marked as dirty with value -1.
+Dirty counters are not modified by future updates.
 \end{itemize}
 \end{itemize}
-Note that all occurences of the same $k$-mer will be stored in the same counter, and the value of the counter should correspond to the abundance of this $k$-mer.
-Since two or more different $k$-mers may hash into the same counter at the same level $T_w[c]$, collisions may occur. The auxiliary information
-helps to detect these collisions.
+Note that all occurences of the same $k$-mer will be stored in the same counter, 
+and the value of the counter should correspond to the abundance of this $k$-mer.
+Since two or more different $k$-mers may hash into the same counter at the same
+level $T_w[c]$, collisions may occur. The auxiliary information helps to detect
+some of these collisions.
 
 
 \paragraph{Estimator of $F_0$}
-Since $F_0 / 2^w$ distinct $k$-mers are hashed into the level $w$, the probabilty, that a counter at level $w$ remains empty
-is $p = (1 - \frac{1}{r})^{F_0/2^w}$. The expected number of empty counters at level $w$ is thus $r \cdot p$. Let us denote the
-number of observed empty counters at level $w$ as $t_0$. Using the asspumtion $t_0 \approx r \cdot p$ we can easily derive the estimator of $F_0$:
+Since on average $F_0 / 2^w$ distinct $k$-mers are hashed into level $w$, the probabilty
+that a counter at level $w$ remains empty is approximately $p = (1 - \frac{1}{r})^{F_0/2^w}$.
+In this estimate and in all subsequent analysis we assume that the number of distinct $k$-mers
+at level $w$ is exactly $F_0/2^w$, although in fact it is a binomial random variable with
+this number as mean\footnote{An exact value of $p$ is $(1 - \frac{1}{r \cdot 2^w})^{F_0}$,
+which considers that any of $F_0$ $k$-mers may cause a collision at level $w$.
+The approximate value of $p$ is almost equal to the exact value for $r, F_0$ used, however,
+and the calculations with the approximate $p$ are much simpler.}.
+
+The expected number of empty counters at level $w$ is thus $r \cdot p$. Let us denote the
+number of observed empty counters at level $w$ as $t_0$. Using the asspumtion
+$t_0 \approx r \cdot p$ we can easily derive the estimator of $F_0$:
 
 $$ \hat F_0 = 2^w \cdot \frac{\ln(t_0/r)}{\ln\left(1 - \frac{1}{r}\right)} $$
 
-To estimate the number of distinct $k$-mers, we choose one level of the sketch $w^*$, so that half of counters of $T_{w^*}$ are empty
--- the number of empty counters at this level ($t_0$) is closest to $r/2$. In \cite{Melsted2014} it has been shown that selecting this level
-provides bounded error of $\hat F_0$ with guaranteed probability.
+To estimate the number of distinct $k$-mers, we choose one level of the sketch
+$w^*$, so that the number of empty counters at this level ($t_0$) is closest to $r/2$.
+In \cite{Melsted2014} it has been shown that selecting this level
+provides a bounded error of $\hat F_0$ with guaranteed probability.
 
 \paragraph{Estimator of $f_i$}
-The expected number of distinct $k$-mers with abundance $i$ hashed to the level $w$ is $f_i / 2^w$.
-When a $k$-mer is hashed into the level $w$, the probabilty, that it is stored in a collision-free counter
-is $(1 - \frac{1}{r})^{F_0/2^w - 1}$, which is probability, that no other $k$-mer from level $w$ will get hashed into the same counter.
-Thus we can estimate the number of collision-free counters with value $i$ as  $f_i / 2^w \cdot (1 - \frac{1}{r})^{F_0/2^w - 1}$.
-If we denote the number of observed collision-free counters with value $i$ as $t_i$, we can derive the estimator of $f_i$:
+The expected number of distinct $k$-mers with abundance $i$ hashed to level $w$ is $f_i / 2^w$.
+When a $k$-mer is hashed into level $w$, the probabilty that it is stored in a collision-free
+counter is $(1 - \frac{1}{r})^{F_0/2^w - 1}$, which is the probability that no other $k$-mer 
+from level $w$ will get hashed into the same counter. Thus we can estimate the number of
+collision-free counters with value $i$ as  $f_i / 2^w \cdot (1 - \frac{1}{r})^{F_0/2^w - 1}$.
+If we denote the number of observed collision-free counters with value $i$ as $t_i$,
+we can derive the estimator of $f_i$:
 
 $$ \hat f_i = t_i \cdot 2^w \cdot \left(1 - \frac{1}{r}\right)^{1 - F_0/2^w} $$
 
-Again, one level $w^*$ is selected to estimate $f_i$, so that it maximizes $t_i$ -- the number of observed collision-free counters with value $i$.
-This decision was not discussed by the authors, but it seems to be a reasonable choice to achieve the higest accuracy, since higher levels
-would contain fewer counters with value $i$ and lower levels would countain fewer collision-free counters.
+Again, one level $w^*$ is selected to estimate $f_i$, so that it maximizes $t_i$ -- the number 
+of observed collision-free counters with value $i$. This decision was not discussed by the authors,
+but it seems to be a reasonable choice to achieve the higest accuracy, since higher levels
+would contain fewer counters with value $i$ and lower levels would countain fewer
+collision-free counters.
 
-We use an assumption that if a counter holds a value $i$, it must originate from a $k$-mer with abundance $i$, 
-but hashing collisions can occur. With the collision detection mechanism in place, most of the counters with collisions are discarded but
-some collisions can remain undetected, however. The value $t_i$ is based on the number of non dirty counters, 
-but these include both true positives (collision-free counters) and false positives (counters with an undetected collision).
-The authors have shown that the expected number of false positive at one level is $r/u$ \cite{Sivadasan2016} and that 
-parameter $u$ can be set to make false positives negligible.
+\paragraph{Undetected collsions}
+We use an assumption that if a counter holds a value $i$, it must originate from a $k$-mer 
+with abundance $i$, but hashing collisions can occur. With the collision detection mechanism
+in place, most of the counters with collisions are discarded, but some collisions can remain
+undetected. The value $t_i$ is based on the number of non dirty counters, but these include both
+true positives (collision-free counters) and false positives (counters with an undetected
+collision). 
+
+The authors have shown that the expected number of false positive at one level
+is at most $r/u$ and that parameter $u$ can be set to make false positives negligible\footnote{We 
+note that the expected number of false positives does not depend on
+the number of distinct $k$-mers $F_0$. With increasing $F_0$ more collisions take place,
+but also more collisions are detected and these two effects cancel each other out. 
+The proof can be found in Lemma 4 of Appendix D of \cite{Sivadasan2016}.}. As with $2k$ 
+bits per counter we would be able to retain the whole $k$-mer stored in this 
+counter and thus detect all collisions perfectly, the parameter $u$ only provides 
+an effective trade-off between memory usage and accuracy.
+
+In our analysis we will ignore the effect of false positives and we will use an assumption
+that all collisions are being detected.
 
 \paragraph{Median amplification}
-To further decrease the variance of estimates and to make use of multiprocessing, $t$ independent instances of sketch are run concurrently.
-Estimate $\hat F_0$ is then selected as median of $\hat F_0^{(1)}, \dots, \hat F_0^{(t)}$, and also estimates of $f_i$ are
-selected as medians from $t$ instances. 
+To further decrease the variance of estimates and to make use of multiprocessing, 
+$t$ independent instances of Kmerlight's sketch are run concurrently.
+Estimate $\hat F_0$ is then selected as median of $\hat F_0^{(1)}, \dots, \hat F_0^{(t)}$, 
+and estimates of $f_i$ are also selected as medians from $t$ instances. 
 
 \paragraph{Accuracy and complexity}
 The parameters $r$, $u$ ant $t$ can be altered to achieve a viable memory-accuracy trade-off.
-The algorithm uses $O(t \cdot r \cdot \log(F_0))$ memory words by $t$ instances of sketches with $\log F_0$ levels with $r$ counters each,
-and an update of $t$ sketches (processing of one $k$-mer) demands $O(t)$ time.
+The algorithm uses $O(t \cdot r \cdot \log(F_0))$ memory words by $t$ instances of sketches
+with $W = \log F_0$ levels with $r$ counters each. 
+An update of $t$ sketches (processing of one $k$-mer) requires $O(t)$ time.
 
-The authors have shown that the algorithm computes estimates $\hat F_0$ and $\hat f_i$ for sufficiently large $f_i$ ($f_i \geq F_0 / \lambda$)
-with a bounded relative error ($(1-\eps)F_0 \leq \hat F_0 \leq (1+\eps)F_0,~ (1-\eps)f_i \leq \hat f_i \leq (1+\eps)f_i$) with
-probability at least $1 - \delta$, when the parameters are set as follows: $t = O(\log(\lambda/\delta))$, $r = O(\frac{\lambda}{\eps^2})$ and $u = O(\frac{\lambda F_0}{\eps^2})$,. 
+The authors have shown that the algorithm computes estimates $\hat F_0$ and $\hat f_i$
+for sufficiently large $f_i$ ($f_i \geq F_0 / \lambda$) with a bounded relative error 
+$(1-\eps)F_0 \leq \hat F_0 \leq (1+\eps)F_0,~ (1-\eps)f_i \leq \hat f_i \leq (1+\eps)f_i$ with
+probability at least $1 - \delta$, when the parameters are set as follows: 
+$t = O(\log(\lambda/\delta))$, $r = O(\frac{\lambda}{\eps^2})$
+and $u = O(\frac{\lambda F_0}{\eps^2})$. 
 
-Due to the loose constants in asymptotic estimate, these values of $t, r, u$ can not be directly used in practice to guarantee the error bounds, however,
-and the accuracy of this algorithm was tested experimentally with arbitrary parameters $t=7, r=2^{16}, 2^{18}, u=2^{13}$.
-
+Due to the loose constants in the asymptotic estimate, these values of $t, r, u$ cannot be
+directly used in practice to guarantee the error bounds. The accuracy of this algorithm was tested
+experimentally with arbitrary parameters $t=7, r=2^{16}, 2^{18}, u=2^{13}$.
