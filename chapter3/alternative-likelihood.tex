@@ -1,0 +1,58 @@
+\section{Alternatives to Likelihood Computation}
+The approximate histograms constitute a new set of inputs for CovEst.
+With an ambition to make CovEst more precise and more robust to the approximation inaccuracies,
+we would like to alter CovEst to be able to cope with the inacuraccies introduced by
+Kmerlight or KmerGenie.
+
+As we show in \ref{sec:estimation-variance}, we can estimate the variance and 
+model the disribution of Kmerlight's errors. We noticed that different histogram columns $f_i$
+have different variances and so we want to incorporate these differences into CovEst.
+
+When CovEst searches for the most likely parameters $\theta$, it evaluates the likelihood
+of the observed histogram by comparing $\hat f_1, \hat f_2, \dots, \hat f_m$ and 
+$p_1, p_2, \dots p_m$. The idea of the improvement is to provide the variances of 
+$\hat f_i$ as an additional input to CovEst. With these variances, CovEst could
+attribute a higher importance to the columns with lower variance and attribute a 
+lower importance the the columns with value $\hat f_i$ fluctuating more.
+
+Let us denote the true histogram as $f$ and the approximated histogram as $\hat f$.
+CovEst should seek the shape of histogram $f$ by maximizing $P(\hat f \,|\, f)$. 
+
+\subsection{KmerGenie's Errors}
+\label{sec:kmergenie-errors}
+In \ref{sec:simple-sampling} we described a method used by KmerGenie to compute 
+an approximate histogram. In this section we provide a simple analysis of KmerGenie's
+errors that will in turn help us understand the relationship of Kmerlight's histograms
+and CovEst.
+
+Each distinct $k$-mer is either counted by KmerGenie with probability $1/s$ or it is discarded 
+with probability $1 - 1/s$. Therefore, the abundance of a $k$-mer does not change 
+with sampling process -- either all of its occurences are counted or none of them are.
+This means that the estimate $\hat f_i$ is computed only from those $f_i$ distinct $k$-mers 
+that contribute to the column $f_i$ by having abundance $i$. No other $k$-mers can
+influence the value $\hat f_i$.
+
+On average $f_i / s$ $k$-mers with abundance $i$ are chosen and counted by KmerGenie.
+Moreover, the number of these $k$-mers follow a binomial distribution $Bin(f_i, 1/s)$
+and it holds for the estimates that
+$$\hat f_i \sim s \cdot Bin(f_i, 1/s)$$
+The random vector $(\hat f_1, \hat f_2, \dots, \hat f_m, d)$, where $d$ is a number
+of distinct discarded $k$-mers follows a multinomial distribution 
+$$s \cdot Mult\left(F_0, \frac{f_1}{F_0} \frac{1}{s}, \frac{f_2}{F_0} \frac{1}{s}, \dots, 
+\frac{f_m}{F_0} \frac{1}{s}, 1-\frac{1}{s}\right)$$
+that can be interpreted as putting $F_0$ $k$-mers into $m+1$ buckets. With this knowledge we can
+calculate the probability $P(\hat f\,|\,f)$.
+
+\medskip
+
+How to incorporate this knowledge into CovEst? We can notice that, in fact, to maximize 
+$P(\hat f\,|\,f)$ it is sufficient to find $\arg \max_f \left(\sum_{i=1}^m \hat f_i \log f_i
+\right)$. And this is exactly the same expression, that CovEst maximizes.
+
+Here we find that CovEst by design expects the inaccuracies produced by KmerGenie
+and thus there is no space for improvement.
+
+\subsection{Likelihood Function for Kmerlight}
+
+\subsection{Minimizing the Sum of Square Errors}
+

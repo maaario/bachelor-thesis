@@ -1,107 +1,179 @@
 \section{The Source of Approximation Bias}
 \label{sec:source-of-bias}
 
-To calculate an estimate of $f_i$, the level $w^*$ is chosen
+To calculate an estimate of $f_i$, the level $w_i^*$ is chosen by Kmerlight
 to maximize $t_i^{(w)}$ -- the number of collision-free counters with value $i$ at level $w$.
 
-$$t_i^{(w)} = |\{T_w[c].v = i ~|~ c \in \{0, \dots, r-1\}\}| ~~~~~~~~~~~~ w^* = \arg\max_w t_i^{(w)}$$
+$$t_i^{(w)} = |\{T_w[c].v = i ~|~ c \in \{0, \dots, r-1\}\}| 
+~~~~~~~~~~~~ w_i^* = \arg\max_w t_i^{(w)}$$
 
-Then the number of counters at this level is converted into the estimate of $f_i$ by multiplying it by 
-$2^{w^*} \cdot \left(1 - \frac{1}{r}\right)^{1 - F_0/2^{w^*}}$. 
+Then the number of counters at this level is converted into the estimate of
+$f_i$ by multiplying it by $2^{w^*} \cdot \left(1 - \frac{1}{r}\right)^{1 - F_0/2^{w^*}}$. 
 
-The reason why the level $w^*$ is selected as it is, is not clearly stated in Kmerlight's original paper \cite{Sivadasan2016}. 
-We believe that the authors hoped to minimize the variance of the estimator $\hat f_i$.
+The reason why the level $w_i^*$ is selected by this criterion, 
+is not clearly stated in Kmerlight's original paper \cite{Sivadasan2016}. 
+We believe that the authors hoped to minimize the variance of the estimator $\hat f_i$
+by includeing as many $k$-mers in the estimate as possible.
 
-\subsection{Collision-free Counters and Analytical $w^*$}
+\subsection{Analytical $w^+$}
 \label{sec:analytical-w}
-If counter $T_w[c]$ holds value $i$, it means that $i$ occurences of the same $k$-mer were hashed into it.
-We assume that all the collisions are being detected, so the value of the counter equals the abundance of the $k$-mer hashed into it.
+In order to get insight into which levels $w_i^*$ are selected by Kmerlight, 
+we will analytically find the levels $w_i^+$ that maximize $E(t_i^{(w)})$ -- the expected number 
+of collison-free counters with value $i$.
 
-Can the level $w^*$ be computed analytically? This level should maximize $E(t_i^{(w)})$, the expected number of collision-free counters holding the value $i$.
-
-But the values $E(t_1^{(w)}), E(t_2^{(w)}), \dots, E(t_m^{(w)})$ are in the same relative ratios at every level. If there are two times more $k$-mers with
-abundance one than the $k$-mers with abundance three, we can also expect two times more counters storing the value one than there are counters storing value three.
-By this argument, maximizing $E(t_i^{(w)})$ means maximizing the number of all collision-free counters at one level.
-
-Let us denote with $p_{cf}$ the probability that a single counter is collision-free. Then the expected number of collion-free counters is $r \cdot p_{cf}$.
-Under the assumption of uniform hashing into one of $r$ counters, $p_{cf}$ is the probability that only one of $F_0/2^w$ $k$-mers were hashed into that counter.
-
-The number of distinct $k$-mers hashed into one counter ($X$) follows a binomial distribution, $X \sim \mathrm{Bin}(F_0/2^w, 1/r)$, so $p_{cf}$ can be expressed as follows:
-\begin{equation} \label{eq:pcf}
-p_{cf} = P[X=1] = \frac{F_0}{2^w} \cdot \frac{1}{r} \left(1 - \frac{1}{r}\right)^{F_0/2^w - 1}
-\end{equation}
-and the probability that a counter is empty ($p_e$) and the probability that a counter holds a collision ($p_c$) can be derived easily as well:
-$$p_e = P[X=0] = \left(1 - \frac{1}{r}\right)^{F_0/2^w} ~~~~~~ p_c = P[X>1] = 1 - p_e - p_{cf}$$
-
-The value of $w^*$ can be obtained by differentiation ($\frac{\mathrm{d}}{\mathrm{d}w}p_{cf} = 0$) or by using the discrete inequalities 
-$p_{cf}^{(w^*)} \geq p_{cf}^{(w^*-1)}, p_{cf}^{(w^*)} \geq p_{cf}^{(w^*+1)}$. 
+As it was derived in (\ref{eq:ti}), 
+$E(t_i^{(w)}) = f_i / 2^w \cdot \left(1 - \frac{1}{r}\right)^{F_0/2^w - 1}$.
+The value of $w_i^+$ at which $E(t_i^{(w)})$ is maximized can be obtained by differentiation 
+($\frac{\mathrm{d}}{\mathrm{d}w}E(t_i^{(w)}) = 0$) or by using the discrete inequalities 
+$E(t_i^{(w^+_i-1)}) \leq E(t_i^{(w^+_i)}) \leq E(t_i^{(w^+_i+1)})$. 
 By manipulating the inequalities we get
-\begin{equation} \label{eq:wstarbounds}
-\frac{1}{4} \leq \left(1 - \frac{1}{r}\right)^{F_0/2^{w^*}} \leq \frac{1}{2}
+\begin{equation} \label{eq:wplusbounds}
+\frac{1}{4} \leq \left(1 - \frac{1}{r}\right)^{F_0/2^{w^+_i}} \leq \frac{1}{2}
 \end{equation}
+and finally we can caluclate $w_i^+$:
+$$\lg F_0 + \lg\lg \frac{r}{r-1}-1 \leq w_i^+ \leq \lg F_0 + \lg\lg \frac{r}{r-1}$$
+A symbol $\lg$ denotes the binary logarithm. 
+
+As $w_i^+$ denotes a Kmerlight's level, it will always be a positive integer.
+In rare cases there can be two solutiotions $w_i^+ = \lfloor \lg F_0 + \lg\lg \frac{r}{r-1} \rfloor,
+w_i^+ = \lceil \lg F_0 + \lg\lg \frac{r}{r-1} \rceil$. For some values of $F_0$ the optimal 
+value of $w_i^+$ may be less than one, but in these cases we choose $w_i^+=1$. In practice,
+$w^+_i$ can be simply computed in a for-cycle through $w=1, \dots, W$, choosing $w$ that
+maximizes $E(t_i^{(w)})$. 
 
 \medskip
 
-Apart from our ability to calculate $w^*$ and $p_{cf}$, an important outcome of
-this section is the observation that the value $w^*$ selected by Kmerlight should not
-depend on $i$ or $f_i$ and it is expected to be the same for the estimates of all $f_i$.
+Note that the choice of the optimal level $w_i^+$ does not depend on values of $i$ or $f_i$,
+but only on values of $F_0$ and $r$. Since $w_1^+ = w_2^+ = \dots = w_m^+$, from now on 
+we will refer to this level simply by $w^+$.
+
+As the level $w^+$ maximizes $E(t_i^{(w)})$ for any non-zero value $i$, 
+this level also maximizes the expected number of all non-empty collision-free counters
+$E(t^{(w)}) = \sum_{i=1}^m E(t_i^{(w)}) = F_0 / 2^w \cdot
+\left(1 - \frac{1}{r}\right)^{F_0/2^w - 1} $.
+
+% Apart from our ability to calculate $w^*$ and $p_{cf}$, an important outcome of
+% this section is the observation that the value $w^*$ selected by Kmerlight should not
+% depend on $i$ or $f_i$ and it is expected to be the same for the estimates of all $f_i$.
 
 \subsection{Explanation of Bias}
-Since the ratio $f_i / F_0$ is very low for $i>1$ and this ratio determines
-the fraction of collision-free counters holding the value $i$, each $f_i$ is
-represented by only a relatively small number of collision-free counters at each level of 
-Kmerlight's sketch. Let us denote as $t^{(w)}$ the observed number of all collision-free
-counters at the level $w$ and denote as $t_i^{(w)}$ the number of those with value $i$.
+Since the ratio $f_i / F_0$ is typically very low for higher values of $i$ and this
+ratio determines the value of $t_i^{(w)}$ (the number of collision-free counters holding
+the value $i$), each $f_i$ is represented by only a relatively small number of collision-free
+counters at each level of Kmerlight's sketch. Therefore $t_i^{(w)}$ have high relative variances. 
 
-The expected number of collision-free counters at level $w$ is 
-$E(t^{(w)}) = r \cdot p_{cf} = F_0 / 2^w \cdot (1 - 1/r)^{F_0/2^w - 1}$ from \ref{eq:pcf}.
-From the bounds \ref{eq:wstarbounds} we know that at level $w^*$
-$1/4 \leq (1 - 1/r)^{F_0/2^{w^*}} \leq 1/2$.
+%The expected number of collision-free counters at level $w$ is 
+%$E(t^{(w)}) = r \cdot p_{cf} = F_0 / 2^w \cdot (1 - 1/r)^{F_0/2^w - 1}$ from \ref{eq:pcf}.
+%From the bounds \ref{eq:wplusbounds} we know that at level $w^*$
+%$1/4 \leq (1 - 1/r)^{F_0/2^{w^*}} \leq 1/2$.
 
-By examining the levels $w^*-1$ and $w^*+1$ we learn that the number of collision-free
-counters at these levels is similar to the number of collision-free counters at level $w^*$. 
-There are two times more $k$-mers hashed into the level $w^*-1$ but since more collisions
-happen here, only $1/4$ to $1/16$ of $k$-mers are collision-free. Similarly, two times fewer
-$k$-mers are hashed to the level $w^*+1$ and less collisions happen there which makes 
-$1/\sqrt{2}$ to $1/2$ of them collision-free. If we consider $c = F_0/2^{w^*} \cdot (1-1/r)^{-1}$,
-we can summarize the similarity of levels as follows:
-$$E(t^{(w^*)}) \in \left\langle \frac{1}{2}c, \frac{1}{4}c  \right\rangle ~~~~
-E(t^{(w^*-1)}) \in \left\langle \frac{1}{2}c, \frac{1}{8}c  \right\rangle ~~~~
-E(t^{(w^*+1)}) \in \left\langle \frac{1}{2\sqrt{2}}c, \frac{1}{4}c  \right\rangle
+By examining the levels $w^+-1$ and $w^++1$ we learn that the number of collision-free
+counters at these levels is similar to the number of collision-free counters at level $w^+$. 
+From (\ref{eq:ti}) we can see that there are two times more $k$-mers hashed into the level $w^+-1$
+than $k$-mers hashed into $w^+$, but also more collisions happen at $w^+-1$. These
+two effects partially cancel each other out and maintain similar values of $E(t^{(w)})$
+for $w = w^+-1, w^+, w^++1$.
+
+As we substitute bounds from (\ref{eq:wplusbounds}) into (\ref{eq:ti}), we learn that
+$$ 
+\frac{F_0}{2^{w^+}} \cdot \frac{1}{4} \cdot \left(1 - \frac{1}{r}\right)^{-1}
+\leq E(t^{(w^+)}) \leq 
+\frac{F_0}{2^{w^+}} \cdot \frac{1}{2} \cdot \left(1 - \frac{1}{r}\right)^{-1}
+$$
+and if we do the same for the level $w^+-1$ we get:
+$$ 
+2 \cdot \frac{F_0}{2^{w^+}} \left(\frac{1}{4}\right)^2 \left(1 - \frac{1}{r}\right)^{-1}
+\leq E(t^{(w^+)}) \leq 
+2 \cdot \frac{F_0}{2^{w^+}} \left(\frac{1}{2}\right)^2 \left(1 - \frac{1}{r}\right)^{-1}
+$$
+Finally, for the level $w^++1$ we get:
+$$ 
+\frac{1}{2} \cdot \frac{F_0}{2^{w^+}} \left(\frac{1}{4}\right)^{1/2} \left(1 - \frac{1}{r}\right)^{-1}
+\leq E(t^{(w^+)}) \leq 
+\frac{1}{2} \cdot \frac{F_0}{2^{w^+}} \left(\frac{1}{2}\right)^{1/2} \left(1 - \frac{1}{r}\right)^{-1}
 $$
 
-As a result of high variance of $t_i^{(w)}$ and close values of $E(t^{(w^*-1)}), 
-E(t^{(w^*)}),E(t^{(w^*+1)})$, any of these levels could hold the maximal $t_i^{(w)}$ 
-and become chosen by Kmerlight as its $w^*$. Kmerlight always chooses the level which 
-maximizes $t_i^{(w)}$ and this leads to values of $t_i^{(w^*)}$ consistently higher
-than $E(t_i^{(w^*)})$ and consequently biases the estimator $\hat f_i$.
 
-\subsection{Demonstration on Experimental Data}
+If we substitute $c = F_0/2^{w^+} \cdot (1-1/r)^{-1}$,
+we can summarize the similarity of levels as follows:
+\begin{equation} \label{eq:level-similarity}
+E(t^{(w^+)}) \in \left\langle \frac{1}{4}c, \frac{1}{2}c  \right\rangle ~~~~
+E(t^{(w^+-1)}) \in \left\langle \frac{1}{8}c, \frac{1}{2}c  \right\rangle ~~~~
+E(t^{(w^++1)}) \in \left\langle \frac{1}{4}c,\frac{1}{2\sqrt{2}}c  \right\rangle
+\end{equation}
 
-In order to demonstrate the similarity of $E(t^{(w)})$ at the levels close to $w^*$ we
+As a result of low values and high variances of $t_i^{(w)}$ and similar
+values of $E(t^{(w^+-1)})$, $E(t^{(w^+)})$ and $E(t^{(w^++1)})$, any of these levels could
+hold the maximal $t_i^{(w)}$ and become chosen by Kmerlight as its $w^*_i$. 
+
+Kmerlight always chooses the level which maximizes $t_i^{(w)}$ and this freedom of choice 
+leads to values of $t_i^{(w^*_i)}$ consistently higher than values of $E(t_i^{(w^+)})$
+which consequently biases the estimator $\hat f_i$ towards higher values.
+
+\begin{figure}[h]
+\centerline{\includegraphics[width=0.8\textwidth, trim={0cm, 5.5cm, 0cm, 0cm}, clip]{images/kmerlight_wstar.png}}
+\caption[$w_i^*$ selected by Kmerlight]{Each column 
+shows at most seven levels $w_i^*$ that were selected by one of seven instances of Kmerlight.
+If a level was chosen by more instances for a specific $i$, its circle is darker.
+Kmerlight was run with the same parameters and on the same set of reads as in 
+experiment in section \ref{sec:error-characteristics}.}
+\label{img:w-selected-by-kmerlight}
+\end{figure}
+
+From one Kmerlight run we extracted the values $w_i^*$ for different $f_i$ 
+and we present them in Figure \ref{img:w-selected-by-kmerlight}.
+For estimate of each $f_i$ there are up to seven\footnote{If there are no counters holding 
+the value $i$ in the whole sketch,  Kmerlight's instance does not choose any level
+and consequently estimates $f_i$ as zero.} values of $w_i^*$, each selected by one 
+instance of seven Kmerlight's sketches. The most of selected levels follow the analytical 
+$w^+ = 9$; however, Kmerlight often chooses $w_i^* = 8, 10$ to maximize $t_i^{(w)}$. 
+Note that for $3\leq i \leq 15$ and $i \geq 40$, the values of $f_i$ are low, and thus 
+$t_i^{(w)}$ have high relative variance (as it was presented in section
+\ref{sec:error-characteristics}). The maximal $t_i^{(w)}$ can thus also be reached
+at levels more distant from the analytical $w^+ = 9$.
+
+\subsection{The Content of Counters}
+To provide an insight into the relations presented in (\ref{eq:level-similarity}),
+let us now briefly investigate, how the numbers of empty,
+collision-free and colliding counters vary acrross levels.
+
+As we focus on a single level $w$, let us denote as $p_{cf}$ the probability
+that a single counter is non-empty and collision-free. In other words, $p_{cf}$ is the 
+probability that exactly one of $F_0/2^w$ $k$-mers was hashed into that counter.
+
+The number of distinct $k$-mers hashed into one counter ($X$)
+follows a binomial distribution, $X \sim \mathrm{Bin}(F_0/2^w, 1/r)$, 
+so $p_{cf}$ can be expressed as follows:
+\begin{equation} \label{eq:pcf}
+p_{cf} = P[X=1] = \frac{F_0}{2^w} \cdot \frac{1}{r} \left(1 - \frac{1}{r}\right)^{F_0/2^w - 1}_{.}
+\end{equation}
+Similarly, we can derive the probability $p_e$ that a counter is empty and the probability 
+$p_c$ that a counter holds a collision:
+$$p_e = P[X=0] = \left(1 - \frac{1}{r}\right)^{F_0/2^w} ~~~~~~ p_c = P[X>1] = 1 - p_e - p_{cf}$$
+
+Note that the expected number of non-empty collion-free counters at one level is 
+$E(t^{(w)}) = r \cdot p_{cf}$. 
+
+In order to further demonstrate the similarity of $E(t^{(w)})$ at the levels close to $w^+$ we
 display the values of $p_{cf} = E(t^{(w)}) / r, p_e, p_c$ for different levels in
-figure \ref{img:pe-pcf-pc}. These probabilities represent the fractions of 
-collision-free, empty and collided counters respectively. 
+Figure \ref{img:pe-pcf-pc}. These probabilities represent the fractions of 
+non-empty collision-free, empty and collided counters respectively. 
 
 \begin{figure}[h]
 \centerline{\includegraphics[width=0.8\textwidth, trim={0cm, 3.5cm, 0cm, 0cm}, clip]{images/pcf.png}}
 \caption[Plot of $p_e, p_{cf}, p_c$ across the levels]{The values of $p_e, p_{cf}, p_c$ 
 represent the theoretical fractions of empty, collision-free and collided counters in
-each level respectively. To relate these theoretical values to the experiment we set 
-$F_0 = 1.2 \times 10^7, r = 2^{15}$. The presented experiment shows the worst possible
-situation with $E(t^{(8)}) \approx E(t^{(9)})$.}
+each level respectively. To make these theoretical values comparable to the experimental
+resultes from section \ref{sec:error-characteristics}, we set $F_0 = 1.2 \times 10^7, r = 2^{15}$.} 
 \label{img:pe-pcf-pc}
 \end{figure}
 
-From one Kmerlight run we extracted the values $w^*$ for different $f_i$ and we present them in the figure \ref{img:w-selected-by-kmerlight}.
+The presented settings show one of the worst possible situations. Since
+$E(t^{(8)}) \approx E(t^{(9)})$, Kmerlight very frequently chooses the level $w_i^*$ from 
+$\{8, 9\}$ (as it can be seen at Figure \ref{img:w-selected-by-kmerlight}), 
+but it always prefers the one with the highest value of $t^{(w)}$.
+Thus $E(t_i^{(w^*_i)}) > E(t^{(8)}) \approx E(t^{(9)})$, which results in overestimation.
 
-\begin{figure}
-\centerline{\includegraphics[width=0.8\textwidth, trim={0cm, 5.5cm, 0cm, 0cm}, clip]{images/kmerlight_wstar.png}}
-\caption[$w^*$ selected by Kmerlight]{For estimate of each $f_i$ there are up to seven
-values of $w^*$, each selected by one instance of seven Kmerlight's sketches. The most of 
-selected levels follow the analytical $w^* = 9$, however, Kmerlight often chooses 
-$w^* = 8, 10$ to maximize $t_i^{(w^*)}$. Note that for $3\leq i \leq 15$ and $i \geq 40$
-are the values of $f_i$ low and thus $t_i^{(w)}$ has high variance. The maximal
-$t_i^{(w)}$ can also be reached at levels more distant from the analytical $w^* = 9$.}
-\label{img:w-selected-by-kmerlight}
-\end{figure}
+If there was a greater difference between $E(t^{(w^+)})$, $E(t^{(w^+-1)})$ and
+$E(t^{(w^++1)})$, Kmerlight would choose the level $w^+$ much more often than the other
+levels and so it would have a smaller chance of choosing $t_i^{(w^*_i)} > E(t^{(w^+)})$.

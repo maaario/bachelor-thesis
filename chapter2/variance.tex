@@ -11,13 +11,8 @@ for all $i=1, 2, \dots, m$, we will approximate Kmerlight's variance by a varian
 of $t_i^{(w)}$ at the analytically calculated level $w^*$. In this section we will denote
 $w^*$ simply as $w$, since we will not use any specific property of $w^*$.
 
-Every $k$-mer that is hashed to the level $w$ can end up 
-in a collision-free counter or can become a part of a collision.
-The probability that a $k$-mer of abundance $i$ does not experience a collision is
-the probability that no other $k$-mer gets hashed into its counter which is
-$(1 - 1/r)^{F_0/2^w-1}$. Note that this value does not depend on $f_i$.
 
-The number of collision-free $k$-mers is equal the number of collision-free counters
+The number of collision-free $k$-mers is equal to the number of collision-free counters
 as each collision-free counter stores a single $k$-mer. Thus we will use the symbol
 $t_i^{(w)}$ to denote both quantities and it holds that 
 $E(t_i^{(w)}) = f_i/2^w \cdot (1 - 1/r)^{F_0/2^w-1}$.

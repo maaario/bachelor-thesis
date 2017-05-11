@@ -48,6 +48,8 @@ Since two or more different $k$-mers may hash into the same counter at the same
 level $T_w[c]$, collisions may occur. The auxiliary information helps to detect
 some of these collisions.
 
+In the analysis we will always assume that both hashing functions perform uniform hashing,
+though only pairwise inedpendent hashing is used in the implementation of the algorithm.
 
 \paragraph{Estimator of $F_0$}
 Since on average $F_0 / 2^w$ distinct $k$-mers are hashed into level $w$, the probabilty
@@ -75,16 +77,18 @@ The expected number of distinct $k$-mers with abundance $i$ hashed to level $w$ 
 When a $k$-mer is hashed into level $w$, the probabilty that it is stored in a collision-free
 counter is $(1 - \frac{1}{r})^{F_0/2^w - 1}$, which is the probability that no other $k$-mer 
 from level $w$ will get hashed into the same counter. Thus we can estimate the number of
-collision-free counters with value $i$ as  $f_i / 2^w \cdot (1 - \frac{1}{r})^{F_0/2^w - 1}$.
+collision-free counters with value $i$ as 
+\begin{equation} \label{eq:ti}
+t_i \approx f_i / 2^w \cdot \left(1 - \frac{1}{r}\right)^{F_0/2^w - 1}
+\end{equation}
 If we denote the number of observed collision-free counters with value $i$ as $t_i$,
 we can derive the estimator of $f_i$:
-
-$$ \hat f_i = t_i \cdot 2^w \cdot \left(1 - \frac{1}{r}\right)^{1 - F_0/2^w} $$
+$\hat f_i = t_i \cdot 2^w \cdot \left(1 - \frac{1}{r}\right)^{1 - F_0/2^w}$.
 
 Again, one level $w^*$ is selected to estimate $f_i$, so that it maximizes $t_i$ -- the number 
 of observed collision-free counters with value $i$. This decision was not discussed by the authors,
 but it seems to be a reasonable choice to achieve the higest accuracy, since higher levels
-would contain fewer counters with value $i$ and lower levels would countain fewer
+would contain fewer counters with value $i$ and lower levels would contain fewer
 collision-free counters.
 
 \paragraph{Undetected collsions}

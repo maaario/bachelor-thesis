@@ -23,12 +23,14 @@ character with probabilty $e/3$ ($e$ denotes error rate) into a one of the three
 
 
 \subsection{Error Characteristics}
+\label{sec:error-characteristics}
 In this section, we compare the exact $k$-mer abundance histogram produced by Jellyfish software
-to approximated histograms computed by Kmerlight (with parameters $t=7, r=2^{15}, u=2^{13}$ using
+\cite{Marcais2011}
+with approximated histograms computed by Kmerlight (with parameters $t=7, r=2^{15}, u=2^{13}$ using
 60MB of RAM). We ran Kmerlight in 50 trials on the same input data and we investigate means and
 standard deviations of the estimates $\hat f_i$. We demostrate three error characteristics
 on a genome generated with parameters $L=10^6, c=50, e=0.02$. In all our experiments we
-use value $k=21$ as used in \cite{Hozza2015, Williams2013}.
+use value $k=21$.
 
 \paragraph{Overestimation}
 In Figure \ref{img:exact-vs-approximated-histogram} it is clearly visible that Kmerlight
@@ -59,8 +61,8 @@ ratio, but a theoretical quantitative analysis of the error distribution was not
 in the previous work \cite{Sivadasan2016, Melsted2014}. 
 
 We provide a quantitative estimate of the variance in section \ref{sec:estimation-variance} 
-and then we use this knowledge to set Kmerlight's parameters to guarantee
-a specific error in \ref{sec:parameters-choice}.
+and then we use this knowledge to set Kmerlight's parameters to achieve
+a desired error in \ref{sec:parameters-choice}.
 
 \begin{figure}
 \centerline{\includegraphics[width=0.8\textwidth, trim={0cm, 0cm, 0cm, 0cm}, clip]{{images/relative_errors_mean_std_L1000000_c50_e0.02_k21_normal}.png}}
@@ -110,6 +112,6 @@ Furthermore, to increase $f_1$ by one, only one $k$-mer occurence is needed, but
 $f_{10}$ by one, ten error-free occurences of the same $k$-mer must be present in the input stream. 
 As a result, less than 6.5\% of distinct $k$-mers have abundance greater than ten.
 
-These effects explain, why the value of $f_1$ is approximately hundred times larger than
-the values of $f_i, i>10$ in the presented experimental data in figures
+These effects explain, why the value of $f_1$ is approximately a hundred times larger than
+the values of $f_i$ for $i>10$ in the presented experimental data in figures
 \ref{img:exact-vs-approximated-histogram} and \ref{img:exact-vs-approximated-histogram-log}.
