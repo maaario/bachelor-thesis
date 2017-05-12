@@ -65,12 +65,15 @@ The expected number of empty counters at level $w$ is thus $r \cdot p$. Let us d
 number of observed empty counters at level $w$ as $t_0$. Using the asspumtion
 $t_0 \approx r \cdot p$ we can easily derive the estimator of $F_0$:
 
-$$ \hat F_0 = 2^w \cdot \frac{\ln(t_0/r)}{\ln\left(1 - \frac{1}{r}\right)} $$
+\begin{equation} \label{eq:hatF0}
+\hat F_0 = 2^w \cdot \frac{\ln(t_0/r)}{\ln\left(1 - \frac{1}{r}\right)}
+\end{equation}
 
 To estimate the number of distinct $k$-mers, we choose one level of the sketch
 $w^*$, so that the number of empty counters at this level ($t_0$) is closest to $r/2$.
-In \cite{Melsted2014} it has been shown that selecting this level
-provides a bounded error of $\hat F_0$ with guaranteed probability.
+This estimator of $F_0$ was first presented in the article by Bar-Yossef et al. in 2002
+\cite{Bar-Yossef2002} and it has been shown that selecting this level provides a bounded 
+error of $\hat F_0$ with guaranteed probability.
 
 \paragraph{Estimator of $f_i$}
 The expected number of distinct $k$-mers with abundance $i$ hashed to level $w$ is $f_i / 2^w$.
@@ -83,7 +86,11 @@ t_i \approx f_i / 2^w \cdot \left(1 - \frac{1}{r}\right)^{F_0/2^w - 1}
 \end{equation}
 If we denote the number of observed collision-free counters with value $i$ as $t_i$,
 we can derive the estimator of $f_i$:
-$\hat f_i = t_i \cdot 2^w \cdot \left(1 - \frac{1}{r}\right)^{1 - F_0/2^w}$.
+
+\begin{equation} \label{eq:hatfi}
+\hat f_i = t_i \cdot 2^w \cdot \left(1 - \frac{1}{r}\right)^{1 - F_0/2^w}
+\end{equation}
+
 
 Again, one level $w^*$ is selected to estimate $f_i$, so that it maximizes $t_i$ -- the number 
 of observed collision-free counters with value $i$. This decision was not discussed by the authors,

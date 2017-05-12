@@ -129,10 +129,14 @@ the sketch can be analyzed to provide the estimate of the $k$-mer abundance hist
 
 \medskip
 
-In 2014 Melsted and Halldórsson introduced a streaming algorithm KmerStream \cite{Melsted2014}
-which was able to estimate the number of distinct $k$-mers ($F_0 = \sum_{i=1}^{m} f_i$) and also
-the number of $k$-mers with abundance one, $f_1$. According to authors, this algorithm is
-at least three times faster than KmerGenie and it can use ten times less memory.
+A streaming Algorithm 2 presented by Bar-Yossef et al. in 2002 \cite{Bar-Yossef2002} was
+able to estimate the number of distinct elements in a stream ($F_0 = \sum_{i=1}^{m} f_i$)
+with theoretical guarantees. 
+
+In 2014 Melsted and Halldórsson \cite{Melsted2014} implemented this algorithm and used it for
+$k$-mer counting. Their algorithm KmerStream also extended Algorithm 2, since it was able
+to estimate the number of $k$-mers with abundance one, $f_1$. According to authors, this
+algorithm is at least three times faster than KmerGenie and it can use ten times less memory.
 
 KmerStream was further improved by Sivadasan et al.\ in 2016 \cite{Sivadasan2016}
 and their software Kmerlight was able to estimate the whole histogram ($f_1, f_2, \dots , f_m$).
