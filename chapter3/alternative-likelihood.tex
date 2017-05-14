@@ -12,7 +12,7 @@ When CovEst searches for the most likely parameters $\theta$, it evaluates the l
 of the observed histogram by comparing $\hat f_1, \hat f_2, \dots, \hat f_m$ and 
 $p_1, p_2, \dots p_m$. The idea of the improvement is to provide the variances of 
 $\hat f_i$ as an additional input to CovEst. With these variances, CovEst could
-attribute a higher importance to the columns with lower variance and attribute a 
+attribute higher importance to the columns with lower variance and attribute
 lower importance the the columns with value $\hat f_i$ fluctuating more.
 
 Let us denote the true histogram as $f$ and the approximated histogram as $\hat f$.
@@ -53,6 +53,10 @@ Here we find that CovEst by design expects the inaccuracies produced by KmerGeni
 and thus there is no space for improvement.
 
 \subsection{Likelihood Function for Kmerlight}
+In section \ref{sec:estimation-variance} we approximated the distribution of Kmerlight
+estimates with normal distribution and we derived an estimate of Kmerlight's variance.
+
+
 
 \subsection{Minimizing the Sum of Square Errors}
 

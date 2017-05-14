@@ -52,3 +52,17 @@ of estimates ($\hat f_i - f_i$) produced by original (blue) and modified (orange
 in 300 trials. Our modification of Kmerlight does not change the variance of estimates.}
 \label{img:std-new-algorithm}
 \end{figure}
+
+\paragraph{Decreased memory consumption}
+Note that we used only one of $64$ Kmerlight's levels to compute estimates for all $f_i$.
+We cannot decrease the overall memory consumption by a factor of 64, however. 
+To compute $\hat F_0$, more levels are needed, but still, we can compute the estimate
+of $F_0$ separately from the estimates of $f_i$.
+
+If we roughly guess $F_0$ from the size of sequencing data, we might be able
+to estimate $F_0$ with a lower number of levels. It might be also sufficient
+to estimate $F_0$ with smaller arrays of conters at each level (smaller parameter $r$).
+Also a completely different method might be used for $F_0$ computation.
+
+We did inquire deeper into the topic of decreasing the memory consumption,
+but we believe that at least a tenfold improvement might be achieved in this direction.

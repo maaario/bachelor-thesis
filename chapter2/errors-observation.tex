@@ -27,7 +27,7 @@ character with probabilty $e/3$ ($e$ denotes error rate) into a one of the three
 In this section, we compare the exact $k$-mer abundance histogram produced by Jellyfish software
 \cite{Marcais2011}
 with approximated histograms computed by Kmerlight (with parameters $t=7, r=2^{15}, u=2^{13}$ using
-60MB of RAM). We ran Kmerlight in 50 trials on the same input data, and we investigate means and
+140MB of RAM). We ran Kmerlight in 50 trials on the same input data, and we investigate means and
 standard deviations of the estimates $\hat f_i$. We demostrate three error characteristics
 on a genome generated with parameters $L=10^6, c=50, e=0.02$. In all our experiments we
 use value $k=21$.
@@ -117,7 +117,7 @@ Furthermore, to increase $f_1$ by one, only one $k$-mer occurence is needed, but
 $f_{10}$ by one, ten error-free occurences of the same $k$-mer must be present in the input stream. 
 As a result, 65\% of error-free $k$-mer occurences constitute a much smaller fraction of all 
 distinct $k$-mers\footnote{If we take a hundred $k$-mer occurences, 35 of them are expected
-to be erroneous, and so they create 35 distinct unique $k$-mers. If the remaining 65 $k$-mers 
+to be erroneous, and so they produce 35 distinct unique $k$-mers. If the remaining 65 $k$-mers 
 contribute to abundancy 10, we are left with approximately 41 distinct $k$-mers from which 
 35 are unique.}.
 
