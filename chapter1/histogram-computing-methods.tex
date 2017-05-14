@@ -2,19 +2,19 @@
 \label{sec:histogram}
 To obtain information from reads, the reads are at first processed into $k$-mers. 
 A $k$-mer is a substring of length exactly $k$. Using a read of length $r$ we produce 
-$r-k+1$ $k$-mers. A $k$-mer may be produced by multiple reads. If it occurs $i$ times
+$r-k+1$ $k$-mers. The same $k$-mer may be produced by multiple reads. If a $k$-mer occurs $i$ times
 among all $k$-mers, we say its abundance is $i$. 
 
 \begin{definition}
-A $k$-mer abundance histogram is a sequence $f = f_1, f_2, f_3, \dots f_m$, 
+The $k$-mer abundance histogram is a sequence $f = f_1, f_2, f_3, \dots f_m$, 
 where $f_i$ is the number of $k$-mers that occur in the input set exactly $i$ times 
 and $m$ is the maximum observed abundance.
 \end{definition}
 
-Apart from estimating the genome size, there are more methods in bioinformatics based on $k$-mers. 
-For example, during the genome assembly, instead of overlaps of reads, the overlaps of 
-$k$-mers are usually considered. As the $k$-mer abundance histogram can be calculated
-quickly, it can be also used for a selection of an optimal $k$ \cite{Chikhi2013}.
+Apart from estimating the genome size, several other methods in bioinformatics are also 
+based on $k$-mers. For example, during genome assembly, the overlaps of $k$-mers are usually
+considered instead of overlaps of reads. As the $k$-mer abundance histogram can be calculated
+quickly, it can be also used for selection of an optimal $k$ in such methods \cite{Chikhi2013}.
 
 Also note that the $k$-mer abundance histogram and many algorithms used for its computation
 can be generalized to a histogram of any input items. Thus the applicability of this topic
@@ -22,29 +22,30 @@ outreaches the field of bioinformatics.
 
 \medskip
 
-The value of $k$ must be set high enough to prevent two unrelated genome locations from 
+The value of $k$ must be set high enough to reduce the chance of two unrelated genome locations from 
 producing the same $k$-mers\footnote{Under the assumption that each of \texttt{A, C, G, T}
-nucleotide occurs at each position with probability $1/4$, we can expect $L \cdot 4^{-k}$ 
-\textit{collisions} in genome of size $L$.}, but with higher values of $k$,
-each sequencing error affects more $k$-mers. In our thesis we always use
+nucleotide occurs at each position with probability $1/4$, we can expect approximately
+$L^2 \cdot 4^{-k}$ \textit{collisions} in a genome of size $L$.}. However, with higher values of $k$,
+each sequencing error affects more $k$-mers, thus increasing the fraction of erroneous $k$-mers
+which produce problems in the downstream analysis. In our thesis we always use
 the value $k=21$ as suggested in \cite{Williams2013, Hozza2015}.
 
 \section{Computing K-mer Abundance Histogram}
 \label{sec:algorithms}
 
 A simple approach to compute $k$-mer abundance histogram would be firstly to compute $k$-mer
-counts -- exact numbers of occurrences of all $k$-mers -- and then count different $k$-mers
-with $j$ occurrences for each $j$. Since the role of $k$-mer counts is important in
-bioinformatics, there exist many tools that compute $k$-mer counts. 
+abundances -- the exact number of occurrences of each $k$-mer -- and then count different $k$-mers
+with $j$ occurrences for each $j$. Since the role of $k$-mer abundances is important in
+bioinformatics, there exist many tools that compute them. 
 In the next subsection (\ref{sec:exact-algorithms}) we briefly summarize these algorithms.
 
-$k$-mer counting is a computationally demanding task for a large amount of $k$-mers, however.
+However, counting $k$-mer abundances is a computationally demanding task for large inputs.
 As we are only interested in the histogram, the problem of $k$-mer counting can be avoided,
 allowing us to estimate the histogram very efficiently without an intermediate step.
 
 \subsection{Exact K-mer Abundance Counting}
 \label{sec:exact-algorithms}
-In the naive hashing algorithm, a hash function $h$ would uniformly distribute strings of
+In a naive hashing algorithm, a hash function $h$ would uniformly distribute strings of
 length $k$ to a hash table $T$. We would store the number of occurrences of a $k$-mer
 $s$ in the counter $T[h(s)]$. In a single scan through all the reads we
 would then increment the appropriate counters. This solution works well for

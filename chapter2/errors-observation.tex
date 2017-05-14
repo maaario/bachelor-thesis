@@ -35,10 +35,10 @@ use value $k=21$.
 \paragraph{Overestimation}
 In Figure \ref{img:exact-vs-approximated-histogram} it is clearly visible that Kmerlight
 systematically overestimates values of $f_i$. Mean errors for abundances around 25 reach
-absolute values of 4000, which is 5\% relative error. Since these values $f_i$ are considerably
-smaller than the number of all $k$-mers $F_0$, it is expected for the estimates $\hat f_i$ 
-to have higher variance with decreasing $f_i$, but the bias of the estimate 
-($E(\hat f_i) \neq f_i$) is unexpected and unexplained yet.  
+absolute values of 4000, which is 5\% relative error. Lower accuracy is expected, since these values
+$f_i$ are considerably smaller than the number of all $k$-mers $F_0$, and Kmerlight guarantees
+high accuracy only for high values of $f_i$. But the clear bias of the estimate towards higher
+values ($E(\hat f_i) > f_i$) is unexpected and unexplained yet.  
 
 In the following sections we clarify the source of this bias (\ref{sec:source-of-bias}),
 and we present means to make the estimator $\hat f_i$ unbiased (\ref{sec:unbiased-estimate}).
@@ -52,13 +52,17 @@ Note that columns for $i=1,2$ were trimmed, having values approximately $10^7, 1
 \label{img:exact-vs-approximated-histogram}
 \end{figure}
 
-\paragraph{Higher variance and mean error with lower $f_i$}
-Another characteristic of the errors is a trend of increasing variance and mean
-error of the estimates for lower values $f_i$. In Figure \ref{img:relative-errors} we visualize 
-mean and standard deviation of relative errors $(\hat f_i - f_i) / f_i$ of $f_i$ estimates.
-Kmerlight guarantees bounded errors only for most frequent $k$-mers, those with high $f_i/F_0$
-ratio, but a theoretical quantitative analysis of the error distribution was not presented
-in the previous work \cite{Sivadasan2016, Melsted2014}. 
+\paragraph{Higher relative errors and higher relative variance with lower $f_i$}
+Another characteristic of the errors is a trend of increasing relative variance and relative
+error of the estimates for lower values $f_i$\footnote{Note that the absolute mean error
+$(\hat f_i - f_i)$ and absolute variance decrease with decreasing $f_i$, as it can be
+seen in Figure \ref{img:exact-vs-approximated-histogram}. However, if
+the errors are considered proportionally to $f_i$, as $(\hat f_i - f_i)/f_i$, these relative
+errors and their variances increase with decreasing $f_i$.}. In Figure \ref{img:relative-errors}
+we visualize mean and standard deviation of relative errors $(\hat f_i - f_i) / f_i$ of $f_i$
+estimates. Kmerlight guarantees bounded errors only for most frequent $k$-mers, those with
+high $f_i/F_0$ ratio, but a theoretical quantitative analysis of the error distribution
+was not presented in the previous work \cite{Sivadasan2016, Melsted2014}. 
 
 We provide a quantitative estimate of the variance in section \ref{sec:estimation-variance} 
 and then we use this knowledge to set Kmerlight's parameters to achieve
@@ -67,7 +71,7 @@ a desired error in \ref{sec:parameters-choice}.
 \begin{figure}
 \centerline{\includegraphics[width=0.8\textwidth, trim={0cm, 1.2cm, 0cm, 0cm}, clip]{{images/relative_errors_mean_std}.png}}
 \caption[Relative approximation errors]{The mean and standard deviation of relative
-errors $(\hat f_i - f_i) / f_i$ for columns sorted by decreasing $f_i$.
+errors $(\hat f_i - f_i) / f_i$ for columns sorted by decreasing $f_i$ (increasing $F_0/f_i$).
 The drop in both statistics at values $\lambda = 10^5$ is caused by Kmerlight's 
 insensitivity to infrequent $k$-mers.}
 \label{img:relative-errors}
