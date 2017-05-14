@@ -1,22 +1,22 @@
 \section{Problem Statement}
-The main goal of our thesis is to determine, whether the approximate histograms
-produced by Kmerlight or KmerGenie can be used as inputs for CovEst that 
-subsequently estimates the genome size. We mainly focus on preserving the 
-accuracy of CovEst's estimates and we focus less on the processing time and memory consumption. 
+The main goal of our thesis is to determine whether the approximate histograms
+produced by Kmerlight or KmerGenie can be used as inputs for CovEst to
+estimate the genome size. We mainly focus on preserving the 
+accuracy of CovEst's estimates, and we focus less on the processing time and memory consumption. 
 
 In order to achieve our goal, we study the performance of CovEst on these approximate
-histograms and we look for ways to increase CovEst's accuracy. There are two approaches
-that come into mind: either we alter the histogram counting algorithm and the approximate
+histograms and look for ways to increase CovEst's accuracy. Two approaches
+come into mind: either we alter the histogram counting algorithm and the approximate
 histogram to better suit the needs of CovEst, or we alter the probabilistic model of CovEst to
-be able to cope with imprecise histograms. We explore both approaches. 
+cope with imprecise histograms. We explore both approaches. 
 
 In chapter \ref{sec:chapter2} we study the qualitative and quantitative character
 of inaccuracies introduced by Kmerlight\footnote{The analysis of KmerGenie's errors is trival
-and it will be presented later in \ref{sec:kmergenie-errors}.} with aim to model or
+and it will be presented later in section \ref{sec:kmergenie-errors}.} with the aim to model or
 predict the distribution of the estimates of $f_i$. We discover that Kmerlight can be modified
 to produce more accurate histograms.
 
-In chapter \ref{sec:chapter3} we analyse CovEst. We find that CovEst manages Kmerlight's and
-KmerGenie's errors by design and that we are unable to further increase its accuracy on
-approximated histograms. Nevertheless, we present a new method which helps CovEst with
-a different type of histogram errors that might be used in the future research.
+In chapter \ref{sec:chapter3} we turn our attention to CovEst. We find that CovEst is robust
+with respect to Kmerlight's and KmerGenie's errors, and that we are unable to further increase
+its accuracy on approximated histograms. Nevertheless, we present a new method which helps CovEst
+with a different type of histogram errors that might be used in the future research.

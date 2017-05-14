@@ -18,8 +18,10 @@ desired error bounded by $\eps$ with probability $1-\delta$.
 \paragraph{Prediction/confidence interval} To gain the error bounds
 in the aforementioned form we derive a prediction interval of $\hat f_i$. 
 
-By standardization we get $(\hat f_i - f_i)/\sigma \dot\sim N(0,1)$ and so it holds that
-$$P\left[-u\left(\frac{\alpha}{2}\right) \leq \frac{\hat f_i - f_i}{\sigma} \leq u\left(\frac{\alpha}{2}\right) \right] \approx 1 - \alpha$$
+By standardization we get $(\hat f_i - f_i)/\sigma \,\dot\sim\, N(0,1)$ and so it holds that
+$$P\left[-u\left(\frac{\alpha}{2}\right) \leq 
+\frac{\hat f_i - f_i}{\sigma} \leq 
+u\left(\frac{\alpha}{2}\right) \right] \approx 1 - \alpha$$
 where $u$ is the critical value of the normal distribution. This formula can be simply
 manipulated to yield the bounds for $\hat f_i$:
 $$P\left[\left(1-u\left(\frac{\alpha}{2}\right)\sigma/f_i\right) f_i \leq \hat f_i \leq \left(1-u\left(\frac{\alpha}{2}\right)\sigma/f_i\right) f_i \right] \approx 1 - \alpha$$

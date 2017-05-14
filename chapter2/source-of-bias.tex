@@ -10,10 +10,10 @@ $$t_i^{(w)} = |\{T_w[c].v = i ~|~ c \in \{0, \dots, r-1\}\}|
 Then the number of counters at this level is converted into the estimate of
 $f_i$ by multiplying it by $2^{w^*_i} \cdot \left(1 - \frac{1}{r}\right)^{1 - F_0/2^{w^*_i}}$. 
 
-The reason why the level $w_i^*$ is selected by this criterion, 
+The reason for selecting level $w_i^*$ by this criterion 
 is not clearly stated in Kmerlight's original paper \cite{Sivadasan2016}. 
 We believe that the authors hoped to minimize the variance of the estimator $\hat f_i$
-by includeing as many $k$-mers in the estimate as possible.
+by including as many $k$-mers in the estimate as possible.
 
 \subsection{Analytical $w^+$}
 \label{sec:analytical-w}
@@ -32,13 +32,13 @@ By manipulating the inequalities we get
 \end{equation}
 and finally we can caluclate $w_i^+$:
 $$\lg F_0 + \lg\lg \frac{r}{r-1}-1 \leq w_i^+ \leq \lg F_0 + \lg\lg \frac{r}{r-1}$$
-A symbol $\lg$ denotes the binary logarithm. 
+Symbol $\lg$ denotes the binary logarithm. 
 
-As $w_i^+$ denotes a Kmerlight's level, it will always be a positive integer.
+As $w_i^+$ denotes a Kmerlight's level, it should always be a positive integer.
 In rare cases there can be two solutiotions $w_i^+ = \lfloor \lg F_0 + \lg\lg \frac{r}{r-1} \rfloor,
 w_i^+ = \lceil \lg F_0 + \lg\lg \frac{r}{r-1} \rceil$. For some values of $F_0$ the optimal 
 value of $w_i^+$ may be less than one, but in these cases we choose $w_i^+=1$. In practice,
-$w^+_i$ can be simply computed in a for-cycle through $w=1, \dots, W$, choosing $w$ that
+$w^+_i$ can be simply computed by a for-loop through $w=1, \dots, W$, choosing $w$ that
 maximizes $E(t_i^{(w)})$. 
 
 \medskip
@@ -46,7 +46,6 @@ maximizes $E(t_i^{(w)})$.
 Note that the choice of the optimal level $w_i^+$ does not depend on values of $i$ or $f_i$,
 but only on values of $F_0$ and $r$. Since $w_1^+ = w_2^+ = \dots = w_m^+$, from now on 
 we will refer to this level simply by $w^+$.
-
 As the level $w^+$ maximizes $E(t_i^{(w)})$ for any non-zero value $i$, 
 this level also maximizes the expected number of all non-empty collision-free counters
 $E(t^{(w)}) = \sum_{i=1}^m E(t_i^{(w)}) = F_0 / 2^w \cdot
@@ -57,7 +56,7 @@ $E(t^{(w)}) = \sum_{i=1}^m E(t_i^{(w)}) = F_0 / 2^w \cdot
 % depend on $i$ or $f_i$ and it is expected to be the same for the estimates of all $f_i$.
 
 \subsection{Explanation of Bias}
-Since the ratio $f_i / F_0$ is typically very low for higher values of $i$ and this
+Since the ratio $f_i / F_0$ is typically very low for higher values of $i$, and this
 ratio determines the value of $t_i^{(w)}$ (the number of collision-free counters holding
 the value $i$), each $f_i$ is represented by only a relatively small number of collision-free
 counters at each level of Kmerlight's sketch. Therefore $t_i^{(w)}$ have high relative variances. 
@@ -120,13 +119,13 @@ experiment in section \ref{sec:error-characteristics}.}
 \label{img:w-selected-by-kmerlight}
 \end{figure}
 
-From one Kmerlight run we extracted the values $w_i^*$ for different $f_i$ 
+We extracted the values $w_i^*$ for different $f_i$ from one Kmerlight run
 and we present them in Figure \ref{img:w-selected-by-kmerlight}.
-For estimate of each $f_i$ there are up to seven\footnote{If there are no counters holding 
+For each $i$ there are up to seven values of $w_i^*$, each selected by one 
+instance of seven Kmerlight's sketches\footnote{If there are no counters holding 
 the value $i$ in the whole sketch,  Kmerlight's instance does not choose any level
-and consequently estimates $f_i$ as zero.} values of $w_i^*$, each selected by one 
-instance of seven Kmerlight's sketches. The most of selected levels follow the analytical 
-$w^+ = 9$; however, Kmerlight often chooses $w_i^* = 8, 10$ to maximize $t_i^{(w)}$. 
+and estimates $f_i$ as zero.}. The most of selected levels follow the analytical 
+$w^+ = 9$; however, Kmerlight often chooses level 8 or 10 to maximize $t_i^{(w)}$. 
 Note that for $3\leq i \leq 15$ and $i \geq 40$, the values of $f_i$ are low, and thus 
 $t_i^{(w)}$ have high relative variance (as it was presented in section
 \ref{sec:error-characteristics}). The maximal $t_i^{(w)}$ can thus also be reached

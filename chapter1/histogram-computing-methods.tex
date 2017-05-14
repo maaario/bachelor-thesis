@@ -53,18 +53,18 @@ millions of $k$-mers, but as the number of distinct $k$-mers increases,
 we must use larger hash tables in order to prevent collisions.
 This solution becomes much slower when the hash table $T$ becomes larger than RAM available.
 
-A few techniques were used to decrease the time and memory consumption by a constant factor. 
+A few techniques were used to decrease the time and memory consumption. 
 These improvements allowed the hashing approach to be used in practice:
 
 \begin{itemize}
 \item Based on an observation that most of the $k$-mers with only one occurrence come from
 erroneous reads, BFCounter \cite{Melsted2011} uses a Bloom filter to exclude rare $k$-mers
-from hash table thus saving memory.
+from the hash table, thus saving memory.
 
 \item Jellyfish \cite{Marcais2011} software uses a thread-safe hash table utilizing the 
 advantage of parallel computing.
 
-\item To decrease the size of hash table, Disk Streaming of K-mers (DSK) \cite{Rizk2013}
+\item To decrease the size of the hash table, Disk Streaming of K-mers (DSK) \cite{Rizk2013}
 algorithm scans the input data in more iterations, processing only a subset of $k$-mers
 in each iteration. A second hash function is used to determine the subset (and the iteration) 
 for each $k$-mer (a similar principle is used to randomly sample $k$-mers 
@@ -84,7 +84,7 @@ store the abundance of each $k$-mer. This provides a way to reduce the amount of
 memory from dozens of gigabytes to hundreds of megabytes, allowing these computations to
 be performed on a personal computer rather than on a cluster.  
 
-To use all data available we must, however, still analyse every $k$-mer of every read so the
+To use all available data, we still analyse every $k$-mer of every read, so the
 time complexity of the following algorithms will still be at least
 linear in the number of $k$-mers.
 
@@ -99,10 +99,10 @@ hashing approach or by any other algorithm presented in the previous section
 Of all the distinct $k$-mers, only a randomly selected fraction of $1/s$ is considered.
 
 The authors used value $s=1000$ in their experiments. As it can be seen from the
-experimental data (fig. \ref{img:kmergenie-sampling-accuracy}), the approximation closely
-follows the exact histogram $f$ at abundances with higher values of $f_i$ -- if enough
+experimental data (Fig. \ref{img:kmergenie-sampling-accuracy}), the approximation closely
+follows the exact histogram $f$ at abundances with higher values of $f_i$, where enough
 of unique $k$-mers of abundance $i$ were sampled. Fewer $k$-mers reach higher abundances
-$i$ and thus even fewer of them are sampled, which leads to decreased relative precision
+$i$, and thus even fewer of them are sampled, which leads to decreased relative precision
 of approximation of lower values $f_i$. The authors did not include 
 any analytical bounds of errors, however.
 
@@ -121,7 +121,7 @@ exaggerating the differences at lower $f_i$ values.}
 \subsubsection{Multilevel sampling}
 The inspiration for the next approach comes from a class of streaming algorithms.
 Streaming algorithms are used to process a sequence of items (in our context $k$-mers) usually 
-in only one pass with limited memory and time usage per item. A common problem solved by
+in only one pass with a limited memory and time per item. A common problem solved by
 streaming algorithms is counting distinct elements in a stream \cite{WikiStreamingAlg}.
 
 These algorithms maintain an approximate summary or a sketch of the previously viewed
@@ -130,18 +130,19 @@ the sketch can be analyzed to provide the estimate of the $k$-mer abundance hist
 
 \medskip
 
-A streaming Algorithm 2 presented by Bar-Yossef et al. in 2002 \cite{Bar-Yossef2002} was
+In 2002 Bar-Yossef et al. presented three streaming algorithms that were
 able to estimate the number of distinct elements in a stream ($F_0 = \sum_{i=1}^{m} f_i$)
-with theoretical guarantees. 
+with theoretical guarantees \cite{Bar-Yossef2002}. 
 
-In 2014 Melsted and Halldórsson \cite{Melsted2014} implemented this algorithm and used it for
-$k$-mer counting. Their algorithm KmerStream also extended Algorithm 2, since it was able
-to estimate the number of $k$-mers with abundance one, $f_1$. According to authors, this
-algorithm is at least three times faster than KmerGenie and it can use ten times less memory.
+In 2014 Melsted and Halldórsson \cite{Melsted2014} implemented and extended Algorithm 2 
+from the aforementioned paper \cite{Bar-Yossef2002} and used it for $k$-mer counting. Their
+algorithm KmerStream was also able to estimate the number of $k$-mers with abundance one, 
+$f_1$. According to the authors, this algorithm is at least three times faster than KmerGenie, 
+and it can use ten times less memory.
 
-KmerStream was further improved by Sivadasan et al.\ in 2016 \cite{Sivadasan2016}
-and their software Kmerlight was able to estimate the whole histogram ($f_1, f_2, \dots , f_m$).
+KmerStream was further improved by Sivadasan et al.\ in 2016 \cite{Sivadasan2016},
+and their software Kmerlight is able to estimate the whole histogram ($f_1, f_2, \dots , f_m$).
 The authors also included theoretical bounds of approximation errors.
 
-As we focus greatly on Kmerlight in our work, we will describe Kmerlight in detail 
-in the next chapter (\ref{sec:kmerlight}).
+As we focus on Kmerlight in our work, we will describe Kmerlight in detail 
+in the next chapter, in section \ref{sec:kmerlight}.

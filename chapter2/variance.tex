@@ -99,7 +99,7 @@ but by using the average $\hat f_i$ we investigate the average estimate of varia
 
 We also used the original Kmerlight to produce the values $\hat f_i$ in another experiment.
 Since we do not model the bias of Kmerlight's estimates, to make the histogram comparable
-to our theory, we had to use the sample mean of $\hat fi$ as the parameter $\mu$.
+to our theory, we had to use the sample mean of $\hat f_i$ as the parameter $\mu$.
 With this adjustment we were able to observe the same phenomena as those presented in figures and 
 described below.
 
@@ -158,11 +158,11 @@ normal distribution seems reasonable, as it can be seen from bottom rows of figu
 We also tried to apply Kolmogorov-Smirnov tests to test the normality of $\hat f_i$. Discrete
 values of $\hat f_i$ create steps in cumulative distribution functions and therefore these
 tests reject normality hypotheses for columns with fewer $k$-mers. KS tests reject normality
-for $f_i < 20000$ with dataset of 300 trials and significance level of $5\%$. 
+for $f_i < 20\,000$ with dataset of 300 trials and significance level of $5\%$. 
 
 \medskip
 
-From the previous observations we conclude that the distribution of $\hat f_i$ can be approximated
+From previous observations we conclude that the distribution of $\hat f_i$ can be approximated
 by gaussian with variance calculated by (\ref{eq:variance}), althouh we are also aware of the
 limitations of this approximation.
 
