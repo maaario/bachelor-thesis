@@ -77,7 +77,9 @@ likelihood of the observerved histogram is
 $\frac{F_0!}{f_1! \cdot f_2! \cdot \dots f_m!} p_1^{f_1} p_2^{f_2} \dots p_m ^{f_m}$.
 Since we are interested only in maximizing the likelihood, log-likelihood is used and
 the constant terms are omitted, leaving the following expression to be maximized:
-$$l(\theta) = \sum_{i=1}^m f_i \log p_i$$
+\begin{equation} \label{eq:covest-likelihood}
+l(\theta) = \sum_{i=1}^m f_i \log p_i
+\end{equation}
 Note that the selection of this method to compare two histograms is arbitrary.
 
 \paragraph{Parameters optimization}

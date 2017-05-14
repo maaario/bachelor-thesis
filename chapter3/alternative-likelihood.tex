@@ -1,7 +1,7 @@
 \section{Alternatives to Likelihood Computation}
 The approximate histograms constitute a new set of inputs for CovEst.
 With an ambition to make CovEst more precise and more robust to the approximation inaccuracies,
-we would like to alter CovEst to be able to cope with the inacuraccies introduced by
+we would like to alter CovEst to better cope with the inacuraccies produced by
 Kmerlight or KmerGenie.
 
 As we show in \ref{sec:estimation-variance}, we can estimate the variance and 
@@ -47,16 +47,74 @@ calculate the probability $P(\hat f\,|\,f)$.
 
 How to incorporate this knowledge into CovEst? We can notice that, in fact, to maximize 
 $P(\hat f\,|\,f)$ it is sufficient to find $\arg \max_f \left(\sum_{i=1}^m \hat f_i \log f_i
-\right)$. And this is exactly the same expression, that CovEst maximizes.
+\right)$. And this is exactly the same expression as the one maximized by CovEst 
+(\ref{eq:covest-likelihood}).
 
 Here we find that CovEst by design expects the inaccuracies produced by KmerGenie
 and thus there is no space for improvement.
 
+
+
+
 \subsection{Likelihood Function for Kmerlight}
 In section \ref{sec:estimation-variance} we approximated the distribution of Kmerlight
-estimates with normal distribution and we derived an estimate of Kmerlight's variance.
+estimates with normal distribution and therefore
+we first tried to modifiy CovEst with the new likelihood computation formula 
+$\sum_{i=1}^m \log g(\hat f_i;\, p_i \cdot \hat F_0, \sigma_i^2)$. The term $g(x; \mu, \sigma^2)$  
+denotes the probability density of the normal distribution at value $x$. This formula depitcts the
+log-likelihood of observing $m$ independent variables $\hat f_i$ that come from $m$
+normal distributions.
+
+As a proof of concept, we calculated the sample variance of $\hat f_i$ from 50 observations 
+and we provided these variances as additional input for CovEst.
+Unfortunately, it often happened that the value $p_i \cdot \hat F_0$ guessed by CovEst was far 
+away from the observed value $\hat f_i$ and thus the probability density was extremely low. 
+As a result, the log likelihood of CovEst's initial guess reached \texttt{-infinty} 
+and so CovEst was unable to optimize parameters $\theta$. The estimates $\hat c$ 
+were thus very inaccurate.
+
+\medskip
+
+To estimate Kmerlight's variance we used the concept of sampling from $k$-mers in 
+\ref{sec:estimation-variance}. We assumed that Kmerlight counts each $k$-mer with probability 
+$p_s$ and discards each $k$-mer with probability $1 - p_s$. In other words, we approximated 
+the Kmerlight's process with exactly the same process as KmerGenie uses. 
+
+Later in \ref{sec:estimation-variance} we included the effect of medians by multiplying the 
+variance by a constant (and by using the normal distribution instead of binomial) 
+and in \ref{sec:variance-experiments} we showed that these assumptions lead to a good 
+approximation of the distribution of Kmerlight's estimates.
+
+The important thing to notice is that the errors of Kmerlight can be modelled in a very similar 
+way to the errors of KmerGenie. In particular, for both Kmerlight and KmerGenie the variance 
+of $\hat f_i$ increases linearly with $f_i$. For Kmerlight it can be seen from (\ref{eq:variance}) 
+and for KmerGenie it can be seen from the variance of binomial distribution 
+($np(1-p)$ for $Bin(n,p)$). If we used a binomial distribution with variance from 
+(\ref{eq:variance}) to model Kmerlight errors instead of the normal distribution, we would
+again come to the same likelihood formula as is already used in CovEst.
+
+Therefore we can conclude that CovEst is also robust with respect to Kmerlight. 
+
 
 
 
 \subsection{Minimizing the Sum of Square Errors}
+The inspiration to minimize the weighted sum of square errors comes from the work of
+Williams et al. \cite{Williams2013}. The authors present a generative probabilistic
+model similar to CovEst, but instead of maximizing the probability $P(\hat f\,|\,f)$ they
+minimize
+\begin{equation} \label{eq:wminsq}
+\sum_{i=1}^m \left(\frac{1}{\hat f_i}(\hat f_i - f_i)\right)^2
+\end{equation}
+where $\hat f$ is the observed histogram and $f$ is a guessed histogram.
+
+We compared the method used by CovEst (\ref{eq:covest-likelihood}) to the method
+based on minimizing the square errors (\ref{eq:wminsq}) on multiple exact and approximated
+histograms and we conclude that both methods result in equally precise estimates.
+
+\medskip
+
+The advantage of the method (\ref{eq:wminsq}) is that it is easy to incorporate different
+variances for different $i$ into the minimization formula.
+
 
