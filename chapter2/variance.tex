@@ -149,7 +149,7 @@ limitations of this approximation.
 \paragraph{Notes on experimental design}
 Our theory does not model the mean value of Kmerlight's estimates. We assume that the estimates
 $\hat f_i$ are unbiased, and therefore we simply use $\mu = f_i$ and we focus on modified
-Kmerlight in presented experiments. If we used one of the observed estimates $\hat f_i$
+Kmerlight in the presented experiment. If we used one of the observed estimates $\hat f_i$
 as the parameter $\mu$, the fluctuation of $\hat f_i$ would shift the plotted theoretical 
 curves to the side and thus it would make the comparison less clear. 
 
@@ -160,19 +160,19 @@ but by using the average $\hat f_i~(f_i)$ we investigate the average estimate of
 We also used the original Kmerlight to produce the values $\hat f_i$ in another experiment.
 Since we do not model the bias of Kmerlight's estimates, to make the histogram comparable
 to our theory, we had to use the sample mean of $\hat f_i$ as the parameter $\mu$.
-With this adjustment we were able to observe the same phenomena as those presented in figures and 
-described below.
+With this adjustment we were able to observe the same phenomena as those presented in figures
+\ref{img:estimated-pdf}, \ref{img:estimated-cdf} and described above.
 
 \medskip
 
 Finally we present the comparison of Kmerlight's variance and its theoretical prediction in
-Figure \ref{img:std-theory}. Despite that our theoretical approximation is based on the 
+Figure \ref{img:std-theory}. Although our theoretical approximation is based on the 
 analytical value of level $w^+$, it can also be used to predict the variance of the original 
 Kmerlight algorithm. 
 
 From the experiment we know that we can estimate standard deviation of Kmerlight's estimates
-with accuracy higher than 5\% even for lower for values of $f_i,
-(E(t_i) = f_i \cdot p_s \geq 1)$. The experiment further proves that an accurate estimate of
+with error less than 5\% even for lower $f_i \approx 1000 \approx 1/p_s.$
+The experiment further suggests that an accurate estimate of
 variance for the lowest values of $f_i < 100$ would be zero. 
 
 \begin{figure}[h]
@@ -181,14 +181,15 @@ variance for the lowest values of $f_i < 100$ would be zero.
 standard deviations of relative errors $(\hat f_i - f_i) / f_i$ of estimates $\hat f_i$
 computed by original and modified Kmerlight respectively in 300 runs on dataset from 
 \ref{sec:error-characteristics}. The green line represents the approximation of standard
-deviation calculated using (\ref{eq:variance}). The figure on the right is only a zoom of the figure
-on the left.}
+deviation calculated using (\ref{eq:variance}). If $\sigma^2_i$ is the variance of $\hat f_i$,
+the standard deviation of relative errors can be calculated as $\sqrt{\sigma_i^2 / f_i^2}$. 
+The figure on the right is only a magnified view of the  the same plot for $f_i > 10^3$.}
 \label{img:std-theory}
 \end{figure}
 
-There is one more interesting thing that can be noticed in Figure \ref{img:std-theory},
-the difference of variances for $f_i \in (100, 1000)$ between original and modified Kmerlight's
-estimates. The original Kmerlight searches for a level $w$ that maximizes $t_i^{(w)}$ so
+There is one more interesting thing that can be noticed in Figure \ref{img:std-theory}:
+the difference of variances between original and modified Kmerlight's estimates for 
+$f_i \in (100, 1000)$ . The original Kmerlight searches for a level $w$ that maximizes $t_i^{(w)}$ so
 even if only one $k$-mer with abundance $i$ survives the collisions at any level of the sketch, 
 Kmerlight will use it for estimation of $\hat f_i$. We did not include this effect into the
 variance estimation, hence the estimates for these $f_i$ are not precise for the original Kmerlight.

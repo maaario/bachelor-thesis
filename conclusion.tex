@@ -2,6 +2,74 @@
 \addcontentsline{toc}{chapter}{Conclusion}
 \markboth{Conclusion}{Conclusion}
 
+The objective of our thesis was to study the character of errors
+of the approximate histograms, and to determine whether these histograms
+can be used for sufficiently precise genome size estimates.
+
+\medskip
+We focused on software Kmerlight, since it 
+is, to our knowledge, the fastest and most memory efficient algorithm for
+$k$-mer abundance histogram approximation. 
+
+From the experimental observations we discovered that Kmerlight's estimates 
+of $\hat f_i$ are biased towards higher values for histogram columns
+with low $f_i / F_0$ ratio. We identified the source of bias: Kmerlight's
+chooses levels $w_i^*$ that maximize $t_i^{(w)}$, the number of collision-free
+counters with value $i$; and we proposed and tested a modification which succesfuly
+eliminated the bias (if we assume that all hashing collisions can be detected). 
+Our modified version of Kmerlight uses only one level $w^+$ which
+maximizes $E(t_i^{(w)})$. Since level $w^+$ can be selected only with use of $F_0$,
+we believe that a more memory-efficient method of histogram approximation can be devised by
+further improvement of Kmerlight. 
+
+As we could compute histograms with zero mean estimation error $E(\hat f_i - f_i) = 0$,
+we focused on the variance of approximation errors. We were able to precisely model the
+distribution of Kmerlight's errors with normal distribution for sufficiently high values of
+$f_i$ and we produced a quantitative estimate of errors' variance for all reasonable values of $f_i$
+(those $f_i$ for which $E(t_i^{(w^+)}) > 1$). Using the estimate of errors we proposed a method
+that can be used to select suitable parameters for Kmerlight, and generally, we believe that the 
+ability to estimate the extent of Kmerlight's errors without the actual histogram computation, 
+makes Kmerlight more suitable for next applications.
+
+Since Kmerlight can be generalized to approximate an abundance histogram of any items,
+not only of $k$-mers, the applicability of our work is thus not limited to the
+bioinformatic context. 
+
+% In our work we also analyzed the errors of KmerGenie, though the analysis was simple.
+There is also one more algorithm which approximates the histogram that we know of: khmer,
+devised by Zhang et al. \cite{Zhang2014}. We did not study khmer, so the topic of khmer's errors 
+and further use of its histograms might become a subject of future work.
+
+\medskip
+
+With the first part of our objective successfully fulfilled we turned our attention towards
+the genome size estimation and software CovEst. To investigate the precision of genome size 
+estimates based on approximated histograms, we performed experiments on simulated genomes.
+
+We examined the influence of genome parameters on the accuracy of coverage estimates.
+With increasing error rate and coverage, the number of unique $k$-mers increases
+and thus the histogram approximations produced by Kmerlight are less precise. Therefore
+also the estimates of the coverage are less precise. The genome size does not seem to 
+significantly influence the relative precision of coverage estimates based on Kmerlight's
+histograms. Since the ratios of $f_i/F_0$ change only slightly with
+various genome sizes, relative errors of Kmerlight also do not change much.
+
+Our experimental evaluation showed that even with approximated histograms, an estimation error
+of less than 1\% can be achieved for most usual datasets (sets of reads with $c > 2$ 
+and $e < 0.05$), and also that estimates based on modified Kmerlight's histograms achieve 
+lower mean errors than the estimates of the original Kmerlight. 
+
+We note that we did not test CovEst estimates on real genomes, but only on simulated genomes. 
+A future work may clarify, how other biological phenomena influence the estimates. 
+
+% With aim to increase CovEst's precision on approximated histograms,
+% we explored different methods that can be used to compare the guessed histogram to the observed
+% one. Even though we were not able to increase CovEst's precision on histograms produced
+% by Kmerlight and KmerGenie, we clarified why CovEst is robust with respect to these histograms.
+% On simula
+
+% Kmerlight has applicabilty outside of bioinformatics
+
 % V závere je potrebné v
 % stručnosti zhrnúť dosiahnuté výsledky vo vzťahu k stanoveným
 % cieľom. Rozsah záveru je minimálne dve strany. 
@@ -9,8 +77,6 @@
 % Zhrňte dosiahnuté výsledky, popíšte v čom predstavujú pokrok, 
 % uveďte možnosti na ďalšiu prácu v oblasti (otvorené problémy)
 
-% V informatických prácach niekedy býva záver kratší ako dve strany, ale
-% stále by to mal byť rozumne dlhý text, v rozsahu aspoň jednej strany.
 % Okrem dosiahnutých cieľov sa zvyknú rozoberať aj otvorené problémy a
 % námety na ďalšiu prácu v oblasti.
 
