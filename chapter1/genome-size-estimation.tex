@@ -29,9 +29,10 @@ the reads are distributed uniformly across the genome.
 \end{table}
 
 When we consider a genome without duplicated sequences and sequencing without errors, we
-would expect the histogram to reach its maximum at the abundance $c$. 
-Most of the locations in genome are covered by $c$ reads, and each read of a particular
-location produces one occurence of a $k$-mer, thus contributing to $f_c$.
+would expect the histogram to reach its maximum close to the abundance $c$.
+Under the assumption that the reads are uniformly distributed over the genome,
+most of the locations in genome are expected to be covered by approximately $c$ reads,
+thus contributing to values close to $f_c$.
 
 Note that the average coverage is a fraction of the sum of lengths of all reads
 and the genome size ($c = n \cdot l/L$, if $n$ denotes the number of all reads). 
@@ -52,7 +53,11 @@ from the relative heights of these peaks $f_{2c}, f_{3c}, \dots f_{nc}$.
 The sequencing error rates also change the shape of the histogram. With error rate of $1\%$ 
 and $k=21$, about $19\%$ of $k$-mer occurences are erroneous and thus unique with high probability, 
 creating a notable peak in the histogram at value one. From the height of $f_1$, the error rate
-can be estimated.
+can be estimated. 
+
+Furthermore, the erroneous $k$-mers also decrease the average effective coverage,
+as some $k$-mers covering each location are wasted because of errors. As a result, the whole
+histogram is shifted towards lower abundancies.
 
 \medskip
 

@@ -15,7 +15,7 @@ $\hat f_i$ as an additional input to CovEst. With these variances, CovEst could
 attribute higher importance to the columns with lower variance and attribute
 lower importance the the columns with value $\hat f_i$ fluctuating more.
 
-Let us denote the true histogram as $f$ and the approximated histogram as $\hat f$.
+Let us denote the exact histogram as $f$ and the observed approximated histogram as $\hat f$.
 CovEst should seek the shape of histogram $f$ by maximizing $P(\hat f \,|\, f)$. 
 
 \subsection{KmerGenie's Errors}
@@ -67,15 +67,15 @@ normal distributions.
 
 As a proof of concept, we calculated the sample variance of $\hat f_i$ from 50 observations 
 and we provided these variances as additional input for CovEst.
-Unfortunately, it often happened that the value $p_i \cdot \hat F_0$ guessed by CovEst was far 
-away from the observed value $\hat f_i$ and thus the probability density was extremely low. 
-As a result, the log likelihood of CovEst's initial guess reached \texttt{-infinty} 
+Unfortunately, it often happened that the value $p_i \cdot \hat F_0$ guessed by CovEst was distant
+from the observed value $\hat f_i$ and thus the probability density was extremely low for these
+columns. As a result, the log-likelihood of CovEst's initial guess reached \texttt{-infinty} 
 and so CovEst was unable to optimize parameters $\theta$. The estimates $\hat c$ 
 were thus very inaccurate.
 
 \medskip
 
-To estimate Kmerlight's variance we used the concept of sampling from $k$-mers in 
+To theoretically estimate Kmerlight's variance we used the concept of sampling from $k$-mers in 
 \ref{sec:estimation-variance}. We assumed that Kmerlight counts each $k$-mer with probability 
 $p_s$ and discards each $k$-mer with probability $1 - p_s$. In other words, we approximated 
 the Kmerlight's process with exactly the same process as KmerGenie uses. 
@@ -86,25 +86,26 @@ and in \ref{sec:variance-experiments} we showed that these assumptions lead to a
 approximation of the distribution of Kmerlight's estimates.
 
 The important thing to notice is that the errors of Kmerlight can be modelled in a very similar 
-way to the errors of KmerGenie. In particular, for both Kmerlight and KmerGenie the variance 
-of $\hat f_i$ increases linearly with $f_i$. For Kmerlight it can be seen from (\ref{eq:variance}) 
-and for KmerGenie it can be seen from the variance of binomial distribution 
-($np(1-p)$ for $Bin(n,p)$). If we used a binomial distribution with variance from 
-(\ref{eq:variance}) to model Kmerlight errors instead of the normal distribution, we would
-again come to the same likelihood formula as is already used in CovEst.
+way to the errors of KmerGenie. As the binomial distribution converges to the normal distribution 
+with increasing amount of data, the shapes of Kmerlight and KmerGenies distributions are similar.
+Moreover, for both Kmerlight and KmerGenie the variance of $\hat f_i$ increases linearly with 
+$f_i$. For Kmerlight it can be seen from (\ref{eq:variance}) and for KmerGenie it can be seen 
+from the variance of binomial distribution ($np(1-p)$ for $Bin(n,p)$). 
 
-Therefore we can conclude that CovEst is also robust with respect to Kmerlight. 
+Since Kmerlight's errors distribution is similar to KmerGenie's distribution
+and since CovEst is designed to expect this type of error distribution,
+we can conclude that CovEst is also robust with respect to Kmerlight.
 
 
 
 
 \subsection{Minimizing the Sum of Square Errors}
 The inspiration to minimize the weighted sum of square errors comes from the work of
-Williams et al. \cite{Williams2013}. The authors present a generative probabilistic
+Williams et al. \cite{Williams2013}. In their paper the authors present a generative probabilistic
 model similar to CovEst, but instead of maximizing the probability $P(\hat f\,|\,f)$ they
 minimize
 \begin{equation} \label{eq:wminsq}
-\sum_{i=1}^m \left(\frac{1}{\hat f_i}(\hat f_i - f_i)\right)^2
+\sum_{i=1}^m \frac{1}{\hat f_i}(\hat f_i - f_i)^2
 \end{equation}
 where $\hat f$ is the observed histogram and $f$ is a guessed histogram.
 
@@ -114,7 +115,40 @@ histograms and we conclude that both methods result in equally precise estimates
 
 \medskip
 
-The advantage of the method (\ref{eq:wminsq}) is that it is easy to incorporate different
-variances for different $i$ into the minimization formula.
+The advantage of the method (\ref{eq:wminsq}) over the method based on log-likelihood
+is that it is easy to incorporate different variances for different $i$ into
+the minimization formula as weights. As we would like the columns with higher
+variance to have lower impact, we can divide each square
+error by the variance and we get the following formula 
+$\sum_{i=1}^m \frac{1}{\sigma^2_i}(\hat f_i - f_i)^2$, where $\sigma_i^2$ denotes the variance
+of the $i$-th column. 
 
+For Kmerlight and KmerGenie, $\sigma_i^2 \propto f_i$ and therefore (\ref{eq:wminsq}) 
+is also robust with respect to Kmerlight's and KmerGenie's errors and we were not able
+to achieve more accurate estimates than the estimates produced by CovEst originally. 
+If the character of errors was different, however,
+this approch might lead to a more precise estimates.
 
+\medskip
+
+To test whether we can improve CovEst's accuracy with this approach on some inputs, we generated 
+histograms with a different variance profile. 
+
+We first generated a genome and reads as described in \ref{sec:data-generation} and then we computed
+the exact histogram with Jellyfish. We set $\sigma_i = f_i$, thus the variance increases
+proportionally to $f_i^2$, instead of $f_i$. Then we simulated the histogram approximation by
+modifying the exact histogram. In each of 100 trials we generated a histogram $\hat f$
+that consisted of $\hat f_i \sim N(f_i, f_i^2), \hat f_i \geq 0$.
+
+In Figure \ref{img:covest-alternative} we present boxplots of coverage estimation errors.
+The estimates produced with use of weighed sum of square errors have lower variance
+than the estimates produced with use of log-likelihood maximization.
+
+\begin{figure}[h]
+\hspace{-0.3cm}
+\centerline{\includegraphics[width=0.7\textwidth, trim={0cm, 3.5cm, 0cm, 0cm}, clip]{{images/covest_alternative_boxplot}.png}}
+\caption[CovEst estimates with different histogram comparison methods]{Distributions of coverage 
+estimate errors with two different methods used in CovEst's parameter optimization --
+maximizing the log-likelihood (blue), minimizing the sum of weighed of square errors (orange).}
+\label{img:covest-alternative}
+\end{figure}

@@ -2,24 +2,52 @@
 \addcontentsline{toc}{chapter}{Introduction}
 \markboth{Introduction}{Introduction}
 
-% Cieľom tejto práce je poskytnúť študentom posledného ročníka
-% bakalárskeho štúdia informatiky kostru práce v systéme LaTeX a ukážku
-% užitočných príkazov, ktoré pri písaní práce môžu potrebovať. Začneme
-% stručnou charakteristikou úvodu práce podľa smernice o záverečných
-% prácach \cite{smernica}, ktorú uvádzame ako doslovný citát.
+In a DNA sequencing experiment, many short reads are produced from a genome.
+For genome to be analyzed, the genomic sequence of DNA must be first assembled from reads,
+but the process of genome assembly is computationally demanding.
 
-% \begin{quote}
-% Úvod je prvou komplexnou informáciou o práci, jej cieli, obsahu a štruktúre. Úvod sa 
-% vzťahuje na spracovanú tému konkrétne, obsahuje stručný a výstižný opis 
-% problematiky, charakterizuje stav poznania alebo praxe v oblasti, ktorá je predmetom 
-% školského diela a oboznamuje s významom, cieľmi a zámermi školského diela. Autor 
-% v úvode zdôrazňuje, prečo je práca dôležitá a prečo sa rozhodol spracovať danú tému. 
-% Úvod ako názov kapitoly sa nečísluje a jeho rozsah je spravidla 1 až 2 strany.
-% \end{quote}
+In previous years, several methods were devised to estimate
+the size of a genome and some other genome characteristics
+without the need of genome assembly. To compute these estimates,
+a summary statistic of reads, $k$-mer abundance histogram is used.
 
-% V nasledujúcej kapitole nájdete ukážku členenia kapitoly na menšie
-% časti a v kapitole \ref{kap:latex} nájdete príkazy na prácu s
-% tabuľkami, obrázkami a matematickými výrazmi. V kapitole
-% \ref{kap:lorem} uvádzame klasický text Lorem Ipsum a na koniec sa
-% budeme venovať záležitostiam záveru bakalárskej práce. 
+In order to produce such histogram, the sequencing reads are first processed into $k$-mers 
+(substrings of a length $k$). Then the histogram of the number of occurences of $k$-mers
+can be computed. 
 
+Most of histogram computing methods are based on hash tables or suffix arrays and
+their memory usage increases at least linearly with the number of processed distinct $k$-mers. 
+To reduce the memory requirements, $k$-mer abundance histograms can be computed approximately.
+One of the newest such algorithms, Kmerlight, combines the techniques of sampling and hashing
+to maintain a sketch of $k$-mers, and from the contents of the skech an estimate of the histogram
+can be computed.
+
+The approximate histograms were already used as an inputs for genome size estimation tools,
+however the impact of the approximation errors on estimate precision was not evaluated.
+
+\medskip
+
+The goal of our thesis is to study the character of errors of the approximate histograms
+and their influence on following genome size estimation.
+
+We start with an empirically study of the approximation errors of Kmerlight algorithm and
+we discover that Kmerlight produces systematically biased estimatates of some histograms.
+We first explain the source of the bias and mathematically support our claims and then
+we also propose a modification of Kmerlight which eliminates this bias.
+
+Next we model the distribution of Kmerlight's errors with normal distribution
+and we propose a formula that describes Kmerlight's variance. We then experimentally test
+our theoretical model and we explore its the limitations.
+
+Finally, we use a software CovEst to estimate the sizes of simulated genomes with use
+of approximate histograms produced by Kmerlight. We describe how different parameters of
+the genome influence the accuracy of the estimates and we compare the estimates
+based on the exact histograms to the estimates based on approximate histograms.
+
+\medskip
+
+In the first chapter we explain the essential biological vocabulary and
+we outline the principles of histogram computing and of genome size estimation.
+In the second chapter we study the approximation errors made by Kmerlight
+and in the last chapter we investigate the accuracy of genome size estimates
+based on approximate histograms.
