@@ -1,7 +1,7 @@
 \section{Evaluation of Approximation Variance}
 \label{sec:estimation-variance}
 
-In this section we will derive a rough quantitaitve estimate of variance of $ \hat f_i$
+In this section we will derive a rough quantitative estimate of variance of $ \hat f_i$
 and then support its credibility by experimental results.
 
 \subsection{Derivation of $Var(\hat f_i)$}
@@ -102,7 +102,7 @@ the best normal fits (orange), theoretical estimates (green).}
 \label{img:estimated-cdf}
 \end{figure}
 
-Note first that for this dataset, $w^+ = 9$ and thus the sampling probabilty $p_s$
+Note first that for this dataset, $w^+ = 9$ and thus the sampling probability $p_s$
 (introduced in the previous section \ref{sec:estimation-variance}) is approximately
 $1/2^9 \cdot \frac{1}{2} \approx 1/1000 $ when we use the upper bound from (\ref{eq:wplusbounds}).
 
@@ -115,7 +115,7 @@ as a median of seven instances, at least one $k$-mer must survive in at least fo
 in order to produce $t_i = 1$. Thus $\hat f_i = 0$. 
 
 Since the estimates $\hat f_i$ are always zero, our estimates of variances for these $f_i$ are 
-very unprecise.
+very imprecise.
 
 \paragraph{Low $f_i$ values, $E(t_i) = f_i \cdot p_s \approx 1$}
 For low values of $f_i$ (i.e. $f_{13}, f_{16}$), a very small number of $k$-mers hash
@@ -143,7 +143,7 @@ tests reject normality hypotheses for columns with few $k$-mers. KS tests reject
 for $f_i < 20\,000$ with our dataset of 300 trials and the significance level of $5\%$. 
 
 From previous observations we conclude that the distribution of $\hat f_i$ can be approximated
-by Gaussian with variance calculated by (\ref{eq:variance}), althouh we are also aware of the
+by Gaussian with variance calculated by (\ref{eq:variance}), although we are also aware of the
 limitations of this approximation.
 
 \paragraph{Notes on experimental design}

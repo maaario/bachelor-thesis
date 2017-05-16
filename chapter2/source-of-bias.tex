@@ -19,7 +19,7 @@ by including as many $k$-mers in the estimate as possible.
 \label{sec:analytical-w}
 In order to get insight into which levels $w_i^*$ are selected by Kmerlight, 
 we will analytically find the levels $w_i^+$ that maximize $E(t_i^{(w)})$ -- the expected number 
-of collison-free counters with value $i$.
+of collision-free counters with value $i$.
 
 As it was derived in (\ref{eq:ti}), 
 $E(t_i^{(w)}) = f_i / 2^w \cdot \left(1 - \frac{1}{r}\right)^{F_0/2^w - 1}$.
@@ -30,12 +30,12 @@ By manipulating the inequalities we get
 \begin{equation} \label{eq:wplusbounds}
 \frac{1}{4} \leq \left(1 - \frac{1}{r}\right)^{F_0/2^{w^+_i}} \leq \frac{1}{2}
 \end{equation}
-and finally we can caluclate $w_i^+$:
+and finally we can calculate $w_i^+$:
 $$\lg F_0 + \lg\lg \frac{r}{r-1}-1 \leq w_i^+ \leq \lg F_0 + \lg\lg \frac{r}{r-1}$$
 Symbol $\lg$ denotes the binary logarithm. 
 
 As $w_i^+$ denotes a Kmerlight's level, it should always be a positive integer.
-In rare cases there can be two solutiotions $w_i^+ = \lfloor \lg F_0 + \lg\lg \frac{r}{r-1} \rfloor,
+In rare cases there can be two solutions $w_i^+ = \lfloor \lg F_0 + \lg\lg \frac{r}{r-1} \rfloor,
 w_i^+ = \lceil \lg F_0 + \lg\lg \frac{r}{r-1} \rceil$. For some values of $F_0$ the optimal 
 value of $w_i^+$ may be less than one, but in these cases we choose $w_i^+=1$. In practice,
 $w^+_i$ can be simply computed by a for-loop through $w=1, \dots, W$, choosing $w$ that
@@ -51,20 +51,11 @@ this level also maximizes the expected number of all non-empty collision-free co
 $E(t^{(w)}) = \sum_{i=1}^m E(t_i^{(w)}) = F_0 / 2^w \cdot
 \left(1 - \frac{1}{r}\right)^{F_0/2^w - 1} $.
 
-% Apart from our ability to calculate $w^*$ and $p_{cf}$, an important outcome of
-% this section is the observation that the value $w^*$ selected by Kmerlight should not
-% depend on $i$ or $f_i$ and it is expected to be the same for the estimates of all $f_i$.
-
 \subsection{Explanation of Bias}
 Since the ratio $f_i / F_0$ is typically very low for higher values of $i$, and this
 ratio determines the value of $t_i^{(w)}$ (the number of collision-free counters holding
 the value $i$), each $f_i$ is represented by only a relatively small number of collision-free
 counters at each level of Kmerlight's sketch. Therefore $t_i^{(w)}$ have high relative variances. 
-
-%The expected number of collision-free counters at level $w$ is 
-%$E(t^{(w)}) = r \cdot p_{cf} = F_0 / 2^w \cdot (1 - 1/r)^{F_0/2^w - 1}$ from \ref{eq:pcf}.
-%From the bounds \ref{eq:wplusbounds} we know that at level $w^*$
-%$1/4 \leq (1 - 1/r)^{F_0/2^{w^*}} \leq 1/2$.
 
 By examining the levels $w^+-1$ and $w^++1$ we learn that the number of collision-free
 counters at these levels is similar to the number of collision-free counters at level $w^+$. 
@@ -134,7 +125,7 @@ at levels more distant from the analytical $w^+ = 9$.
 \subsection{The Content of Counters}
 To provide an insight into the relations presented in (\ref{eq:level-similarity}),
 let us now briefly investigate, how the numbers of empty,
-collision-free and colliding counters vary acrross levels.
+collision-free and colliding counters vary across levels.
 
 As we focus on a single level $w$, let us denote as $p_{cf}$ the probability
 that a single counter is non-empty and collision-free. In other words, $p_{cf}$ is the 
@@ -150,7 +141,7 @@ Similarly, we can derive the probability $p_e$ that a counter is empty and the p
 $p_c$ that a counter holds a collision:
 $$p_e = P[X=0] = \left(1 - \frac{1}{r}\right)^{F_0/2^w} ~~~~~~ p_c = P[X>1] = 1 - p_e - p_{cf}$$
 
-Note that the expected number of non-empty collion-free counters at one level is 
+Note that the expected number of non-empty collision-free counters at one level is 
 $E(t^{(w)}) = r \cdot p_{cf}$. 
 
 In order to further demonstrate the similarity of $E(t^{(w)})$ at the levels close to $w^+$ we
@@ -163,7 +154,7 @@ non-empty collision-free, empty and collided counters respectively.
 \caption[Plot of $p_e, p_{cf}, p_c$ across the levels]{The values of $p_e, p_{cf}, p_c$ 
 represent the theoretical fractions of empty, collision-free and collided counters in
 each level respectively. To make these theoretical values comparable to the experimental
-resultes from section \ref{sec:error-characteristics}, we set $F_0 = 1.2 \times 10^7, r = 2^{15}$.} 
+results from section \ref{sec:error-characteristics}, we set $F_0 = 1.2 \times 10^7, r = 2^{15}$.} 
 \label{img:pe-pcf-pc}
 \end{figure}
 

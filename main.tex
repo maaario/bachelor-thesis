@@ -136,6 +136,9 @@ Supervisor: & \mfskolitel \\
 \newpage 
 \chapter*{Acknowledgement}
 
+% I would like to thank my supervisor doc. Mgr. Bronislava Brejová, PhD.
+% for 
+
 % --- Koniec poďakovania
 
 % -------------------
@@ -143,15 +146,21 @@ Supervisor: & \mfskolitel \\
 % -------------------
 \newpage 
 \chapter*{Abstrakt}
+Sekvenovaním DNA zvyčajne vzniká množstvo krátkych reťazcov. 
+Sekvenovacie dáta môžeme zosumarizovať vo forme histogramu počtov výskytov jednotlivých
+podslov pevnej dĺžky. Takéto histogramy sa dajú použiť napríklad na odhadovanie dĺžky 
+genómu. V našej práci skúmame algoritmus Kmerlight, ktorý počíta spomínaný histogram približne.
+Zistili sme, že Kmerlight počíta vychýlené odhady histogramov, no podarilo sa nám navrhnúť 
+novú verziu algoritmu Kmerlight, ktorej odhady sú už nevychýlené. V práci ďalej teoreticky 
+modelujeme pravdepodobnostné rozdelenie chýb odhadov histogramu a pomocou experimentov 
+sme overili správnosť nášho modelu. Na záver sme použili program CovEst 
+na výpočet odhadov dĺžok genómov z približných histogramov a preskúmali sme, ako
+chyby v histogramoch ovplyvňujú presnosť týchto odhadov. Napriek tomu, že CovEst bol
+navrhnutý na spracúvanie presných histogramov, naše výsledky ukazujú, že CovEst môže byť použitý
+aj na približných histogramoch, ktorých výpočet si vyžaduje menšie množstvo pamäte.
 
 
-% Slovenský abstrakt v rozsahu 100-500 slov, jeden odstavec. Abstrakt
-% stručne sumarizuje výsledky práce. Mal by byť pochopiteľný pre bežného
-% informatika. Nemal by teda využívať skratky, termíny alebo označenie
-% zavedené v práci, okrem tých, ktoré sú všeobecne známe.
-
-\paragraph*{Kľúčové slová:} 
-% jedno, druhé, tretie (prípadne štvrté, piate)
+\paragraph*{Kľúčové slová:} histogram počtov $k$-tic, Kmerlight, odhad dĺžky genómu, CovEst
 % --- Koniec Abstrakt - Slovensky
 
 
@@ -160,16 +169,19 @@ Supervisor: & \mfskolitel \\
 % -------------------
 \newpage 
 \chapter*{Abstract}
-From the DNA sequencing data a histogram of the number of occurences of substrings of 
-a fixed length may be produced. Such histograms can be used to estimate the size of a genome. 
+
+DNA sequencing data is typically a large collection of short strings called reads.
+We can summarize such data by computing a histogram of the number of occurrences of substrings of 
+a fixed length. Such histograms can be used for example to estimate the size of a genome. 
 In this thesis we study an existing tool, Kmerlight, which
 computes approximate histograms. We discover an approximation bias, and we propose
 a new, unbiased version of Kmerlight. We also model the distribution of approximation
 errors, and we support our theoretical model by experimental data. Furthermore, we use another
 tool, CovEst, to compute genome size estimates with use of approximate histograms, and 
-we evaluate the precision of such estimates.
-
-% Abstract in the English language (translation of the abstract in the Slovak language).
+we evaluate the precision of such estimates compared to results obtained from exact histograms.
+Our results show that although CovEst was designed to work with exact histograms,
+it can be used with their approximate versions, which can be produced in a much smaller amount of
+memory.
 
 
 \paragraph*{Keywords:} $k$-mer abundance histogram, Kmerlight, genome size estimation, CovEst  
@@ -273,12 +285,12 @@ we evaluate the precision of such estimates.
 %--- Prilohy---
 % -------------------
 
-%Nepovinná časť prílohy obsahuje materiály, ktoré neboli zaradené priamo  do textu. Každá príloha sa začína na novej strane.
-%Zoznam príloh je súčasťou obsahu.
+% Nepovinná časť prílohy obsahuje materiály, ktoré neboli zaradené priamo  do textu.
+% Každá príloha sa začína na novej strane.
+% Zoznam príloh je súčasťou obsahu.
 %
-%\addcontentsline{toc}{chapter}{Appendix A}
-%\input AppendixA.tex
-%
+\input AppendixA.tex
+
 %\addcontentsline{toc}{chapter}{Appendix B}
 %\input AppendixB.tex
 

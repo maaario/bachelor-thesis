@@ -1,11 +1,11 @@
 \chapter{Use of Histograms for Genome Size Estimation}
 \label{sec:chapter3}
-In the beginnning of this chapter we provide a more detailed description of a probabilistic model
+In the beginning of this chapter we provide a more detailed description of a probabilistic model
 that can be used to estimate genome characteristics using only $k$-mer abundance histogram.
 This model was presented in \cite{Hozza2015, Hozza2016} and was implemented in a software CovEst.
 
-Next we present our work. We study the the accuracy of CovEst estimates based on
-approximate histograms and we improve the accuracy by using our new modified version of Kmerlight.
+Next we present our work. We study the accuracy of CovEst estimates based on
+approximate histograms, and we improve the accuracy by using our new modified version of Kmerlight.
 
 In the end of this chapter we explore a different way to improve CovEst's accuracy. 
 We conclude that this method does not improve CovEst's estimates on histograms produced by
@@ -17,24 +17,24 @@ approximate histograms.
 CovEst uses a $k$-mer abundance histogram $f = f_1, f_2, \dots, f_m$ as its input,
 and finds the parameters $\theta = (c, e)$\footnote{Coverage and error rate, as described 
 in the introductory section \ref{sec:intro-estimation}. In a more advanced version, $\theta$
-also includes parameters related to the extent of multiplied regions.} that maximize
+also includes parameters related to the extent of repeated regions.} that maximize
 the likelihood of the observed histogram $L(\theta) = P(f \,|\, \theta)$.
 
-Using the paramaters $\theta$, CovEst, in fact, first generates the expected histogram
+Using parameters $\theta$, CovEst, in fact, first generates the expected histogram
 shape $p_1, p_2, \dots p_m$, where $p_i$ denotes the probability that a distinct $k$-mer
 occurs with abundance $i$. Then the likelihood of this shape is evaluated and thus 
-two sets of different parameters $\theta, \theta'$ can be compared.
+different sets of parameters $\theta, \theta'$ can be compared.
 
 \paragraph{Generative model}
-While the average coverage of a genome nucleotide is $c$, the average coverage
+While the average coverage of a single nucleotide in the genome is $c$, the average coverage
 of a $k$-mer is lower, since to produce a $k$-mer, a read must cover the whole
 $k$-mer. CovEst thus internally uses a value $c_k = (r-k+1)/r \cdot c$ to describe the
 average coverage of a $k$-mer. This is the only assumption made which involves the reads.
 
-In the following text we will consider the $k$-mers to be uniformly distributed
+In the following text, we will consider the $k$-mers to be uniformly distributed
 over the genome. This assumption enabled the authors to model the abundance of a $k$-mer
 with a Poisson distribution with mean $c_k$. Since $k$-mers with abundance zero are never
-observed, it is important to use a zero-truncated Poission distribution, 
+observed, it is important to use a zero-truncated Poisson distribution, 
 which leads to the following formula for $p_i$:
 % As the probability of obtaining the value greater than zero is 
 % $(1 - e^{c_k})$ in the Poisson distribution, we renormalize $p_i$ with this term:
@@ -42,13 +42,13 @@ which leads to the following formula for $p_i$:
 $$ p_i = Poi_0(i; c_k) = \frac{c_k^i e^{-c_k}}{i!(1 - e^{-c_k})} $$
 
 The authors assume that at sequencing, the probability that a nucleotide will be read
-correctly is $1-\eps$ and the probability that it will be read as a specific different
+correctly is $1-\eps$, and the probability that it will be read as a specific different
 nucleotide is $\eps/3$. Therefore, if the Hamming distance of two $k$-mers is $s$, the
 probability that one was obtained by reading another one is $(\eps/3)^s(1-\eps)^{k-s}$.
 The distribution of the $k$-mers produced by $s$ errors can be
 therefore modelled with Poisson distribution with mean 
 $\lambda_s = (\eps/3)^s(1-\eps)^{k-s} \cdot c_k$ and to compute $p_i$ we would use
-a weighed sum of these distributions:
+a mixture of these distributions:
 $$ p_i = \sum_{s=0}^k \alpha_s \cdot Poi_0(i; \lambda_s) $$
 where the coefficients $\alpha_s$ sum to one ($\sum_{s=0}^k \alpha_s = 1$) and they correspond
 to fractions of $k$-mers produced by $s$ errors. From one $k$-mer ${k \choose s} 3^s$ 
@@ -58,29 +58,30 @@ Therefore the coefficients $\alpha_s$ will be set to have values corresponding t
 $\alpha_s \propto {k \choose s} 3^s(1 - e^{-\lambda_s})$.
 
 The authors also modelled the repeats by adding together the contributions made by
-$k$-mers that were copied once, twice\dots which can be again expressed as a weighed sum of
+$k$-mers that were copied once, twice\dots which can be again expressed as a mixture of
 distributions. We will not describe the repeat modelling, since we will not use this extension
-in our thesis, but the details can be found in the orignal work \cite{Hozza2015, Hozza2016}.  
+in our thesis, but the details can be found in the original work \cite{Hozza2015, Hozza2016}.  
 
 %The authors further assume that each distinct $k$-mer comes only from one source $k$-mer.
-%In other words, all occurences of the histogram $k$-mer $y$ were produced by
+%In other words, all occurrences of the histogram $k$-mer $y$ were produced by
 %reading a single $k$-mer $x$ in the genome and also that $k$-mer $x$ did not produce any
 %other different $k$-mers as a result of errors.
 
 \paragraph{Likelihood computation}
-To evaluate the validity of the parameters $\theta$, the generated shape of the histogram is
+To evaluate the validity of the parameters $\theta$, the theoretical shape of the histogram is
 compared to the observed histogram by likelihood computation
 $L(\theta) = P(f\,|\,\theta) = P(f_1, f_2, \dots f_m\,|\,p_1, p_2, \dots, p_m)$. In order to
-compare two histograms, the authors assume that each distinct $k$-mer is sampled
+compare two histograms, the authors assume that vector $(f_1, f_2, \dots, f_m)$ is sampled
 from a multinomial distribution $Mult(F_0, p_1, p_2, \dots p_m)$ and thus the
-likelihood of the observerved histogram is 
+likelihood of the observed histogram is 
 $\frac{F_0!}{f_1! \cdot f_2! \cdot \dots f_m!} p_1^{f_1} p_2^{f_2} \dots p_m ^{f_m}$.
 Since we are interested only in maximizing the likelihood, log-likelihood is used and
 the constant terms are omitted, leaving the following expression to be maximized:
 \begin{equation} \label{eq:covest-likelihood}
 l(\theta) = \sum_{i=1}^m f_i \log p_i
 \end{equation}
-Note that the selection of this method to compare two histograms is arbitrary.
+Note that this method maximizes the likelihood for the multinomial distribution,
+and thus assumes that $f_i$ follows distribution $Bin(F_0, p_i)$.
 
 \paragraph{Parameters optimization}
 As a starting point for parameter optimization, CovEst uses a very simple model
@@ -93,8 +94,9 @@ Then a standard optimization algorithm L-BFGS-B is used to find the parameters $
 that maximize the likelihood of the observed histogram, using the full model and the
 likelihood computation explained above.
 
-\paragraph{Exerimental evaluation}
+\paragraph{Experimental evaluation}
 The authors evaluated the precision of CovEst on generated genomes \cite{Hozza2015}
 and concluded that CovEst can estimate the coverage (and thus the genome size) within 1\% 
 of the true value for the common parameters. Moreover, CovEst produces reasonable
 estimates even for the datasets with coverage less than one or with error rate of $10\%$.
+Limited evaluation on a real sequencing reads was also performed.

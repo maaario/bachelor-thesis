@@ -2,11 +2,11 @@
 \label{sec:unbiased-estimate}
 
 Based on our observations in the previous section we will alter Kmerlight 
-to produce unbiased estimates of $f_i$ (under the assumption that there are no undetedected
+to produce unbiased estimates of $f_i$ (under the assumption that there are no undetected
 collisions).
 
 To achieve an unbiased estimate of $f_i$ we will use the level that maximizes the
-expected number number of collision-free counters, instead of the level that maximzes the number
+expected number number of collision-free counters, instead of the level that maximizes the number
 of collision-free counters. We will base our estimates of $f_i$ on the level $w^+$, 
 instead of $w_i^*$. Our modified Kmerlight thus loses the ability to choose the maximal 
 $t^{(w)}$, and the estimates will be now based on values of $t^{(w^+)}$ which
@@ -23,7 +23,7 @@ The value of $F_0$ is estimated in the original way as presented in (\ref{eq:hat
 Note that the estimate depends on the value of $t_0^{(w)}$, $E(t_0^{(w)}) = r \cdot p_e$. 
 Number of empty counters reach high values ($t_0^{(w^*)} \approx r/2$) thus $t_0$ has low
 relative variance and so the effects that biased $\hat f_i$ do not occur here or they cause 
-a smaller scale differences. We do no challenge the unbiasdness of the estimator $\hat F_0$
+a smaller scale differences. We do no challenge the unbiasedness of the estimator $\hat F_0$
 in our work.
 }
 and the value $w^+$ is calculated to maximize the expected number of
@@ -61,7 +61,7 @@ of $F_0$ separately from the estimates of $f_i$.
 
 If we roughly guess $F_0$ from the size of sequencing data, we might be able
 to estimate $F_0$ with a lower number of levels. It might be also sufficient
-to estimate $F_0$ with smaller arrays of conters at each level (smaller parameter $r$).
+to estimate $F_0$ with smaller arrays of counters at each level (smaller parameter $r$).
 Also a completely different method might be used for $F_0$ computation.
 
 We did not inquire deeper into the topic of decreasing the memory consumption,

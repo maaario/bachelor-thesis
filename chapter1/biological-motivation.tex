@@ -32,7 +32,7 @@ Since every read is a segment of DNA, it can also be represented as a string of
 \texttt{A, C, G, T} characters.
 
 There are multiple factors that affect the quality of reads, but we will mostly consider only
-one type of errors: a single nucleotide substitutions caused by sequencer itself. Occasionaly
+one type of errors: a single nucleotide substitutions caused by sequencer itself. Occasionally
 a nucleotide of DNA is read incorrectly and so it is considered to be one of three
 other nucleotides. We use the term error rate to quantify the fraction of incorrectly
 read nucleotides. For example, if the sum of lengths of all reads is $10^9$ and the error
@@ -42,7 +42,7 @@ rate is $0.02$, we can expect $2 \times 10^7$ nucleotides in the reads to be inc
 \label{sec:assembly}
 When the reads are retrieved, it is then the task for bioinformatics to assemble the
 whole genome from many short fragments. The genome assembly relies on the overlaps
-of reads such as in figure \ref{fig:overlapping-reads}: if a suffix of one read is
+of reads such as in Figure \ref{fig:overlapping-reads}: if a suffix of one read is
 identical to a prefix of another read, they presumably originate from overlapping
 locations in the genome, and thus can be joined to form a longer sequence.
 
@@ -68,7 +68,7 @@ is called coverage.
 Since the source locations of reads are randomly distributed over the genome, even at high coverage
 some areas of the genome can remain unsequenced thus preventing complete assembly.
 
-In order to estimate the number of reads necessary for a cerain coverage, we must first
+In order to estimate the number of reads necessary for a certain coverage, we must first
 estimate the genome length. We can base the estimate on the known genomes of related species.
 A different approach would be to sequence the genome in a preliminary experiment, 
 estimate the coverage and the genome length and then continue the sequencing process

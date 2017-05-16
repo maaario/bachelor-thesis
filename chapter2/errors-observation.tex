@@ -11,15 +11,15 @@ process as it was described in section \ref{sec:sequencing}.
 
 As the Kmerlight's input data consist of genome reads, we first generate a genome 
 $g_1g_2g_3 \dots g_L$: a random sequence of length $L$ consisting of characters $A, C, G, T$ 
-each with probabilty $1/4$ at every position.
+each with probability $1/4$ at every position.
 
-Aftewards we generate reads, each of length $l=100$. Instead of creating an explicit number
+Afterwards we generate reads, each of length $l=100$. Instead of creating an explicit number
 of reads, we choose a parameter $c$ (coverage) and generate $c \cdot L / l$ independent reads.
 
 To generate a single read we uniformly select a random starting position $s$ in genome from
 a range $1, \dots, L - l + 1$ and then the read consists of characters
 $g_s g_{s+1} \dots g_{s+l-1}$. Finally, to simulate sequencing errors, we change each read
-character with probabilty $e/3$ ($e$ denotes error rate) into a one of the three other characters.
+character with probability $e/3$ ($e$ denotes error rate) into a one of the three other characters.
 
 
 \subsection{Error Characteristics}
@@ -27,8 +27,8 @@ character with probabilty $e/3$ ($e$ denotes error rate) into a one of the three
 In this section, we compare the exact $k$-mer abundance histogram produced by Jellyfish software
 \cite{Marcais2011}
 with approximated histograms computed by Kmerlight (with parameters $t=7, r=2^{15}, u=2^{13}$ using
-140MB of RAM). We ran Kmerlight in 50 trials on the same input data, and we investigate means and
-standard deviations of the estimates $\hat f_i$. We demostrate three error characteristics
+60MB of RAM). We ran Kmerlight in 50 trials on the same input data, and we investigate means and
+standard deviations of the estimates $\hat f_i$. We demonstrate three error characteristics
 on a genome generated with parameters $L=10^6, c=50, e=0.02$. In all our experiments we
 use value $k=21$.
 
@@ -77,7 +77,7 @@ insensitivity to infrequent $k$-mers.}
 \label{img:relative-errors}
 \end{figure}
 
-\paragraph{Insensivity to lowest $f_i$}
+\paragraph{Insensitivity to lowest $f_i$}
 Since the hash tables of Kmerlight's sketch are smaller than the number of all $k$-mers,
 many $k$-mers collide. When $f_i$, the number of distinct $k$-mers with abundance $i$, reaches
 a specific boundary (in Figure \ref{img:exact-vs-approximated-histogram-log} it seems to be 
@@ -95,8 +95,8 @@ histogram to some applications.
 
 \begin{figure}
 \centerline{\includegraphics[width=1\textwidth, trim={1.5cm, 0cm, 2cm, 1.3cm}, clip]{{images/histogram_errors_L1000000_c50_e0.02_k21_normal_log}.png}}
-\caption[Comparison of exact and approximated histograms in log scale]{The exact (blue) and
-average approximated (orange) histograms, identical to those in figure 
+\caption[Comparison of exact and approximated histograms in log. scale]{The exact (blue) and
+average approximated (orange) histograms, identical to those in Figure 
 \ref{img:exact-vs-approximated-histogram}, but displayed in a logarithmic scale with values 
 $i=1, 2$ included. Note the lack of orange columns where blue columns reach lower 
 values -- due to hashing collisions, Kmerlight cannot estimate $f_i$ lower than $5 \times 10^2$.}
@@ -109,16 +109,16 @@ Unfortunately, in the sequencing data, sequencing errors often create many uniqu
 and thus we have $f_1$ close to $F_0$ and the remaining $f_i$ (for $i > 1$) are much
 smaller than~$F_0$. 
 
-For example, with sequencing error rate of 2\%, 35\% occurences of $21$-mers are erroneous and thus
+For example, with sequencing error rate of 2\%, 35\% occurrences of $21$-mers are erroneous and thus
 unique with high probability. As a result, 35\% of all input $k$-mers are concentrated in $f_1$, and
 65\% of $k$-mers are distributed to other $f_i$. 
 
-Furthermore, to increase $f_1$ by one, only one $k$-mer occurence is needed, but to increase
-$f_{10}$ by one, ten error-free occurences of the same $k$-mer must be present in the input stream. 
-As a result, 65\% of error-free $k$-mer occurences constitute a much smaller fraction of all 
-distinct $k$-mers\footnote{If we take a hundred $k$-mer occurences, 35 of them are expected
+Furthermore, to increase $f_1$ by one, only one $k$-mer occurrence is needed, but to increase
+$f_{10}$ by one, ten error-free occurrences of the same $k$-mer must be present in the input stream. 
+As a result, 65\% of error-free $k$-mer occurrences constitute a much smaller fraction of all 
+distinct $k$-mers\footnote{If we take a hundred $k$-mer occurrences, 35 of them are expected
 to be erroneous, and so they produce 35 distinct unique $k$-mers. If the remaining 65 $k$-mers 
-contribute to abundancy 10, we are left with approximately 41 distinct $k$-mers from which 
+contribute to abundance 10, we are left with approximately 41 distinct $k$-mers from which 
 35 are unique.}.
 
 These effects explain, why the value of $f_1$ is approximately a hundred times larger than

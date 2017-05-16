@@ -1,9 +1,9 @@
 \chapter{Analysis and Improvement of Kmerlight}
 \label{sec:chapter2}
-In this chapter we first present a detailed description of an exising algorithm
+In this chapter we first present a detailed description of an existing algorithm
 Kmerlight \cite{Sivadasan2016} which computes an approximated $k$-mer abundance histogram.
 
-Aftewards we investigate the character of inaccuracies of the estimated histogram, and we present
+Afterwards we investigate the character of inaccuracies of the estimated histogram, and we present
 a novel estimate of error variance. As we discover a systematic estimation bias, we alter
 Kmerlight to produce unbiased histogram estimates. 
 
@@ -25,9 +25,9 @@ and an auxiliary information $T_w[c].p$ from within a range $0, \dots, u-1$.
 
 \paragraph{Update}
 \begin{itemize}
-\item For a distinct $k$-mer, its level is selected so that the probablity of selecting 
+\item For a distinct $k$-mer, its level is selected so that the probability of selecting 
 level $w$ is $1/2^w$. In particular, the $k$-mer is hashed into an integer of $W$ bits 
-and the number of trailing zeroes determines the level $w$. Thus all occurences of the same
+and the number of trailing zeroes determines the level $w$. Thus all occurrences of the same
 $k$-mer will be placed to the same level $w$.
 
 \item Next, using a different hash function
@@ -42,17 +42,17 @@ is equal to $j$, the counter value $T_w[c].v$ is increased.
 Dirty counters are not modified by future updates.
 \end{itemize}
 \end{itemize}
-Note that all occurences of the same $k$-mer will be stored in the same counter, 
+Note that all occurrences of the same $k$-mer will be stored in the same counter, 
 and the value of the counter should correspond to the abundance of this $k$-mer.
 Since two or more different $k$-mers may hash into the same counter at the same
 level $T_w[c]$, collisions may occur. The auxiliary information helps to detect
 some of these collisions.
 
 In the analysis we will always assume that both hashing functions perform uniform hashing,
-though only pairwise inedpendent hashing is used in the implementation of the algorithm.
+though only pairwise independent hashing is used in the implementation of the algorithm.
 
 \paragraph{Estimator of $F_0$}
-Since on average $F_0 / 2^w$ distinct $k$-mers are hashed into level $w$, the probabilty
+Since on average $F_0 / 2^w$ distinct $k$-mers are hashed into level $w$, the probability
 that a counter at level $w$ remains empty is approximately $p = (1 - \frac{1}{r})^{F_0/2^w}$.
 In this estimate and in all subsequent analysis we assume that the number of distinct $k$-mers
 at level $w$ is exactly $F_0/2^w$, although in fact it is a binomial random variable with
@@ -62,7 +62,7 @@ The approximate value of $p$ is almost equal to the exact value for $r, F_0$ use
 and the calculations with the approximate $p$ are much simpler.}.
 
 The expected number of empty counters at level $w$ is thus $r \cdot p$. Let us denote the
-number of observed empty counters at level $w$ as $t_0$. Using the asspumtion
+number of observed empty counters at level $w$ as $t_0$. Using the assumption
 $t_0 \approx r \cdot p$ we can easily derive the estimator of $F_0$:
 
 \begin{equation} \label{eq:hatF0}
@@ -77,7 +77,7 @@ error of $\hat F_0$ with guaranteed probability.
 
 \paragraph{Estimator of $f_i$}
 The expected number of distinct $k$-mers with abundance $i$ hashed to level $w$ is $f_i / 2^w$.
-When a $k$-mer is hashed into level $w$, the probabilty that it is stored in a collision-free
+When a $k$-mer is hashed into level $w$, the probability that it is stored in a collision-free
 counter is $(1 - \frac{1}{r})^{F_0/2^w - 1}$, which is the probability that no other $k$-mer 
 from level $w$ will get hashed into the same counter. Thus we can estimate the number of
 collision-free counters with value $i$ as 
@@ -94,11 +94,11 @@ we can derive the estimator of $f_i$:
 
 Again, one level $w^*$ is selected to estimate $f_i$, so that it maximizes $t_i$ -- the number 
 of observed collision-free counters with value $i$. This decision was not discussed by the authors,
-but it seems to be a reasonable choice to achieve the higest accuracy, since higher levels
+but it seems to be a reasonable choice to achieve the highest accuracy, since higher levels
 would contain fewer counters with value $i$ and lower levels would contain fewer
 collision-free counters.
 
-\paragraph{Undetected collsions}
+\paragraph{Undetected collisions}
 We use an assumption that if a counter holds a value $i$, it must originate from a $k$-mer 
 with abundance $i$, but hashing collisions can occur. With the collision detection mechanism
 in place, most of the counters with collisions are discarded, but some collisions can remain

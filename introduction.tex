@@ -2,25 +2,28 @@
 \addcontentsline{toc}{chapter}{Introduction}
 \markboth{Introduction}{Introduction}
 
-In a DNA sequencing experiment, many short reads are produced from a genome.
-For genome to be analyzed, the genomic sequence of DNA must be first assembled from reads,
+In a DNA sequencing experiment, many reads are produced from a genome.
+These reads are short strings obtained from random locations of the genome,
+potentially with some sequencing errors.
+For a genome to be analyzed, the genomic sequence must be first assembled from the reads,
 but the process of genome assembly is computationally demanding.
 
 In previous years, several methods were devised to estimate
 the size of a genome and some other genome characteristics
-without the need of genome assembly. To compute these estimates,
+without the need of genome assembly \cite{Hozza2015, Williams2013, Melsted2014,
+Sivadasan2016}. To compute these estimates,
 a summary statistic of reads, $k$-mer abundance histogram is used.
-
-In order to produce such histogram, the sequencing reads are first processed into $k$-mers 
-(substrings of a length $k$). Then the histogram of the number of occurences of $k$-mers
+In order to produce such a histogram, the sequencing reads are first processed into $k$-mers 
+(substrings of a length $k$). Then the histogram of the number of occurrences of $k$-mers
 can be computed. 
 
-Most of histogram computing methods are based on hash tables or suffix arrays and
+Most of the histogram computing methods are based on hash tables or suffix arrays 
+\cite{Melsted2011, Marcais2011, Rizk2013, Kurtz2008} and
 their memory usage increases at least linearly with the number of processed distinct $k$-mers. 
 To reduce the memory requirements, $k$-mer abundance histograms can be computed approximately.
-One of the newest such algorithms, Kmerlight, combines the techniques of sampling and hashing
-to maintain a sketch of $k$-mers, and from the contents of the skech an estimate of the histogram
-can be computed.
+One of the newest such algorithms, Kmerlight \cite{Sivadasan2016}, combines the
+techniques of sampling and hashing to maintain a sketch of $k$-mers 
+and from the contents of the sketch computes an estimate of the histogram.
 
 The approximate histograms were already used as an inputs for genome size estimation tools,
 however the impact of the approximation errors on estimate precision was not evaluated.
@@ -28,19 +31,19 @@ however the impact of the approximation errors on estimate precision was not eva
 \medskip
 
 The goal of our thesis is to study the character of errors of the approximate histograms
-and their influence on following genome size estimation.
+and their influence on the subsequent genome size estimation.
 
-We start with an empirically study of the approximation errors of Kmerlight algorithm and
-we discover that Kmerlight produces systematically biased estimatates of some histograms.
-We first explain the source of the bias and mathematically support our claims and then
+We start with an empirical study of the approximation errors of Kmerlight algorithm, and
+we discover that Kmerlight produces systematically biased estimates of some histograms.
+We explain the source of the bias and mathematically support our claims, and then
 we also propose a modification of Kmerlight which eliminates this bias.
 
-Next we model the distribution of Kmerlight's errors with normal distribution
+Next we model the distribution of Kmerlight's errors with the normal distribution,
 and we propose a formula that describes Kmerlight's variance. We then experimentally test
-our theoretical model and we explore its the limitations.
+our theoretical model and explore its limitations.
 
-Finally, we use a software CovEst to estimate the sizes of simulated genomes with use
-of approximate histograms produced by Kmerlight. We describe how different parameters of
+Finally, we use CovEst software \cite{Hozza2015} to estimate the sizes of simulated
+from approximate histograms produced by Kmerlight. We describe how different parameters of
 the genome influence the accuracy of the estimates and we compare the estimates
 based on the exact histograms to the estimates based on approximate histograms.
 

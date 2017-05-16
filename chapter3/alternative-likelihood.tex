@@ -1,33 +1,42 @@
 \section{Alternatives to Likelihood Computation}
-The approximate histograms constitute a new set of inputs for CovEst.
-With an ambition to make CovEst more precise and more robust to the approximation inaccuracies,
-we would like to alter CovEst to better cope with the inacuraccies produced by
+CovEst was designed for use with exact histograms.
+We would like to alter CovEst with an ambition to make it more 
+precise and more robust to the approximation inaccuracies produced by
 Kmerlight or KmerGenie.
 
-As we show in \ref{sec:estimation-variance}, we can estimate the variance and 
-model the disribution of Kmerlight's errors. We noticed that different histogram columns $f_i$
+As we show in section \ref{sec:estimation-variance}, we can estimate the variance and 
+model the distribution of Kmerlight's errors. We noticed that different histogram columns $f_i$
 have different variances and so we want to incorporate these differences into CovEst.
 
 When CovEst searches for the most likely parameters $\theta$, it evaluates the likelihood
 of the observed histogram by comparing $\hat f_1, \hat f_2, \dots, \hat f_m$ and 
 $p_1, p_2, \dots p_m$. The idea of the improvement is to provide the variances of 
 $\hat f_i$ as an additional input to CovEst. With these variances, CovEst could
-attribute higher importance to the columns with lower variance and attribute
-lower importance the the columns with value $\hat f_i$ fluctuating more.
+attribute higher importance to the columns with lower variance.
+
+\medskip
 
 Let us denote the exact histogram as $f$ and the observed approximated histogram as $\hat f$.
-CovEst should seek the shape of histogram $f$ by maximizing $P(\hat f \,|\, f)$. 
+CovEst optimizes the parameters $\theta$ to maximize $P(f\,|\,\theta)$.
+With approximated histograms used, probability $P(\hat f\,|\,\theta)$ should be maximized, however.
+Note that while $P(f\,|\,\theta)$ only includes Poisson distributed values of $f_i$,
+$P(\hat f\,|\,\theta)$ includes the distribution of $f_i$ and also the distribution of 
+$\hat f_i$ (the distribution of approximation errors).
+
+If we know the distribution of errors of histogram approximation $P(\hat f\,|\,f)$,
+we may express the likelihood $P(\hat f\,|\,\theta)$ with a use of probability marginalization:
+
+$$P(\hat f\,|\,\theta) = \sum_f P(\hat f\,|\,f)P(f\,|\,\theta)$$
 
 \subsection{KmerGenie's Errors}
 \label{sec:kmergenie-errors}
 In \ref{sec:simple-sampling} we described a method used by KmerGenie to compute 
 an approximate histogram. In this section we provide a simple analysis of KmerGenie's
-errors that will in turn help us understand the relationship of Kmerlight's histograms
-and CovEst.
+errors in order.
 
 Each distinct $k$-mer is either counted by KmerGenie with probability $1/s$ or it is discarded 
 with probability $1 - 1/s$. Therefore, the abundance of a $k$-mer does not change 
-with sampling process -- either all of its occurences are counted or none of them are.
+with the sampling process -- either all of its occurrences are counted or none of them are.
 This means that the estimate $\hat f_i$ is computed only from those $f_i$ distinct $k$-mers 
 that contribute to the column $f_i$ by having abundance $i$. No other $k$-mers can
 influence the value $\hat f_i$.
@@ -59,9 +68,9 @@ and thus there is no space for improvement.
 \subsection{Likelihood Function for Kmerlight}
 In section \ref{sec:estimation-variance} we approximated the distribution of Kmerlight
 estimates with normal distribution and therefore
-we first tried to modifiy CovEst with the new likelihood computation formula 
+we first tried to modify CovEst with the new likelihood computation formula 
 $\sum_{i=1}^m \log g(\hat f_i;\, p_i \cdot \hat F_0, \sigma_i^2)$. The term $g(x; \mu, \sigma^2)$  
-denotes the probability density of the normal distribution at value $x$. This formula depitcts the
+denotes the probability density of the normal distribution at value $x$. This formula depicts the
 log-likelihood of observing $m$ independent variables $\hat f_i$ that come from $m$
 normal distributions.
 
@@ -69,7 +78,7 @@ As a proof of concept, we calculated the sample variance of $\hat f_i$ from 50 o
 and we provided these variances as additional input for CovEst.
 Unfortunately, it often happened that the value $p_i \cdot \hat F_0$ guessed by CovEst was distant
 from the observed value $\hat f_i$ and thus the probability density was extremely low for these
-columns. As a result, the log-likelihood of CovEst's initial guess reached \texttt{-infinty} 
+columns. As a result, the log-likelihood of CovEst's initial guess reached \texttt{-infinity} 
 and so CovEst was unable to optimize parameters $\theta$. The estimates $\hat c$ 
 were thus very inaccurate.
 
@@ -127,7 +136,7 @@ For Kmerlight and KmerGenie, $\sigma_i^2 \propto f_i$ and therefore (\ref{eq:wmi
 is also robust with respect to Kmerlight's and KmerGenie's errors and we were not able
 to achieve more accurate estimates than the estimates produced by CovEst originally. 
 If the character of errors was different, however,
-this approch might lead to a more precise estimates.
+this approach might lead to a more precise estimates.
 
 \medskip
 
