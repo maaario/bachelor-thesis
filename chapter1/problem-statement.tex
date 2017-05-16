@@ -1,22 +1,17 @@
 \section{Problem Statement}
 The main goal of our thesis is to determine whether the approximate histograms
-produced by Kmerlight or KmerGenie can be used as inputs for CovEst to
+produced by Kmerlight can be used as inputs for CovEst to
 estimate the genome size. We mainly focus on preserving the 
 accuracy of CovEst's estimates, and we focus less on the processing time and memory consumption. 
 
-In order to achieve our goal, we study the performance of CovEst on these approximate
-histograms and look for ways to increase CovEst's accuracy. Two approaches
-come into mind: either we alter the histogram counting algorithm and the approximate
-histogram to better suit the needs of CovEst, or we alter the probabilistic model of CovEst to
-cope with imprecise histograms. We explore both approaches. 
-
-In chapter \ref{sec:chapter2} we study the qualitative and quantitative character
-of inaccuracies introduced by Kmerlight\footnote{The analysis of KmerGenie's errors is trival
-and it will be presented later in section \ref{sec:kmergenie-errors}.} with the aim to model or
+In order to achieve our goal, in chapter \ref{sec:chapter2} we study the qualitative
+and quantitative character of inaccuracies introduced by Kmerlight with the aim to model or
 predict the distribution of the estimates of $f_i$. We discover that Kmerlight can be modified
-to produce more accurate histograms.
+to produce more accurate histograms and we present a model of Kmerlight's errors distribution.
 
-In chapter \ref{sec:chapter3} we turn our attention to CovEst. We find that CovEst is robust
-with respect to Kmerlight's and KmerGenie's errors, and that we are unable to further increase
-its accuracy on approximated histograms. Nevertheless, we present a new method which helps CovEst
-with a different type of histogram errors that might be used in the future research.
+In chapter \ref{sec:chapter3} we we study the performance of CovEst on approximate
+histograms. After providing a more detailed description of CovEst software
+we experimentally evaluate the effects of various coverages, error rates and genome sizes
+on precision of genome size estimates. We find that CovEst is robust with respect to 
+Kmerlight's errors and that CovEst's estimates based on approximate histograms maintain
+a sufficient precision.

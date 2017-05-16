@@ -7,11 +7,6 @@ This model was presented in \cite{Hozza2015, Hozza2016} and was implemented in a
 Next we present our work. We study the accuracy of CovEst estimates based on
 approximate histograms, and we improve the accuracy by using our new modified version of Kmerlight.
 
-In the end of this chapter we explore a different way to improve CovEst's accuracy. 
-We conclude that this method does not improve CovEst's estimates on histograms produced by
-Kmerlight and KmerGenie, but can be used to make CovEst tolerant to other types of
-approximate histograms.
-
 \section{CovEst}
 \label{sec:covest}
 CovEst uses a $k$-mer abundance histogram $f = f_1, f_2, \dots, f_m$ as its input,
@@ -81,7 +76,7 @@ the constant terms are omitted, leaving the following expression to be maximized
 l(\theta) = \sum_{i=1}^m f_i \log p_i
 \end{equation}
 Note that this method maximizes the likelihood for the multinomial distribution,
-and thus assumes that $f_i$ follows distribution $Bin(F_0, p_i)$.
+and thus assumes that the height of $i$-th column of histogram follows distribution $Bin(F_0, p_i)$.
 
 \paragraph{Parameters optimization}
 As a starting point for parameter optimization, CovEst uses a very simple model

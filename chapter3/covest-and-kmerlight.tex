@@ -145,4 +145,14 @@ size can be estimated with $1\%$ precision.
 Furthermore, our observations suggest that these Kmerlight's settings may be sufficient
 to produce precise estimates even for larger genomes.
 
+% \paragraph{Notes on CovEst's robustness with respect to Kmerlight's errors}
+% As explained in paragraph on likelihood computation in section \ref{sec:covest}, 
+% CovEst models heights of histogram columns with the binomial distribution $f_iBin(F_0, p_i)$.
 
+% From (\ref{eq:variance}) we know that we can model the distribution of $\hat f_i$ with the 
+% normal distribution.
+
+% The variance of $f_i$ expected by CovEst can be therefore expressed as 
+% $F_0 \cdot p_i \cdot (1-p_i) \approx F_0 \frac{f_i}{F_0}\left( 1 - \frac{f_i}{F_0} \right)
+% = f_i \left( 1 - \frac{f_i}{F_0} \right)$variance increases approximately linearly
+% with $f_i$ for small ratios of $\frac{f_i}{F_0}$.
