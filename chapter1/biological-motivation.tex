@@ -1,7 +1,7 @@
 \chapter{Background and Problem Statement}
 In this chapter we firstly explain the biological context and the reason why is 
 the genome size estimate necessary. Then we define a $k$-mer abundance histogram
-and algorithms used to compute this histogram exactly and approximately.
+and present algorithms which compute this histogram exactly and approximately.
 Finally, we briefly describe a method for genome size estimation and we will be
 able to present the goals of our thesis.
 
@@ -23,7 +23,7 @@ nucleotides in some plants. The length of a human genome is known to be around
 In a sequencing process we try to obtain a nucleotide sequence of DNA from
 a given biological sample. We will focus on the next generation sequencing technologies
 that can read only short segments of a nucleotide chain, producing reads of length 100--1000
-nucleotides, depending on the specific technology used.
+nucleotides (depending on the specific technology used).
 
 In a sequencing experiment, the DNA is at first randomly fragmented to shorter pieces.
 Then the ends of these pieces are sequenced, producing two reads from one fragment. 
@@ -66,7 +66,7 @@ be a part of multiple reads. The average number of reads covering each nucleotid
 is called coverage. 
 
 Since the source locations of reads are randomly distributed over the genome, even at high coverage
-some areas of the genome can remain unsequenced thus preventing complete assembly.
+some areas of the genome can remain unsequenced, thus preventing complete assembly.
 
 In order to estimate the number of reads necessary for a certain coverage, we must first
 estimate the genome length. We can base the estimate on the known genomes of related species.
@@ -80,7 +80,7 @@ But the genome assembly problems do not end with sufficiently high coverage.
 For example, during the evolution, long segments of DNA can be copied to different locations, 
 creating multiple identical sequences in different parts of genome. 
 
-In section \ref{sec:intro-estimation} we will describe a method that can estimate
+In section \ref{sec:intro-estimation} we will outline a method that can estimate
 the genome size and also other characteristics such as coverage and extent and multiplicity
 of duplicated regions without the need of genome assembly, but this method uses a summary 
 statistic called $k$-mer abundance histogram.

@@ -25,8 +25,9 @@ One of the newest such algorithms, Kmerlight \cite{Sivadasan2016}, combines the
 techniques of sampling and hashing to maintain a sketch of $k$-mers 
 and from the contents of the sketch computes an estimate of the histogram.
 
-The approximate histograms were already used as an inputs for genome size estimation tools,
-however the impact of the approximation errors on estimate precision was not evaluated.
+The approximate histograms were already used as an inputs for genome size estimation tools
+\cite{Sivadasan2016}, however the impact of the approximation errors on estimate
+precision was not evaluated.
 
 \medskip
 
@@ -42,10 +43,10 @@ Next we model the distribution of Kmerlight's errors with the normal distributio
 and we propose a formula that describes Kmerlight's variance. We then experimentally test
 our theoretical model and explore its limitations.
 
-Finally, we use CovEst software \cite{Hozza2015} to estimate the sizes of simulated
+Finally, we use CovEst software \cite{Hozza2015} to estimate the sizes of simulated genomes
 from approximate histograms produced by Kmerlight. We describe how different parameters of
 the genome influence the accuracy of the estimates and we compare the estimates
-based on the exact histograms to the estimates based on approximate histograms.
+based on exact histograms to the estimates based on approximate histograms.
 
 \medskip
 

@@ -38,6 +38,8 @@ very close to median and approximately $70$ per cent of data are located within 
 of the mean. Therefore we can consider the middle line as a good approximation of mean and 
 an inter-quartile-region size as a rough approximation of standard deviation.    
 
+In the end of this section we also present tables with mean errors and standard deviations
+of the coverage estimates, so the absolute values of these statistics can be compared.
 
 \begin{figure}[h]
 \hspace{-0.3cm}
@@ -50,7 +52,6 @@ Kmerlight used to compute the $k$-mer abundance histogram.}
 \label{img:covest-error-rates}
 \end{figure}
 
-
 \paragraph{Effects of error rate on precision}
 In the first experiment (Figure \ref{img:covest-error-rates}) we investigate the effect of
 increasing sequencing error rates on the accuracy of coverage estimates.
@@ -58,8 +59,8 @@ increasing sequencing error rates on the accuracy of coverage estimates.
 On exact histograms CovEst produces unbiased estimates of coverage with their variance increasing
 with error rate. Estimates based on approximate histograms are clearly less accurate
 but still achieve a relatively good precision. Standard deviations of $\hat c_{ok}$ 
-and $\hat c_{mk}$ are similar, and they are larger than the standard devations of 
-$\hat c_j$ by an order of magnitude. 
+and $\hat c_{mk}$ are similar, and they are approximately five times larger than 
+the standard devations of $\hat c_j$. 
 
 Mean errors are consistently lower for modified Kmerlight than the errors of the original Kmerlight.
 Note that to prove the statistical significance of the difference between $\hat c_{ok}$ and 
@@ -70,8 +71,8 @@ with exception of the dataset with $e=0.05$ where the $p$-value is 0.3. Thus we 
 the estimates based on modified Kmerlight's histograms are significantly better than the
 estimates based on original Kmerlight's histograms. 
 
-With modified Kmerlight, CovEst produces estimates with mean errors approximately 
-<0.1\%, <0.1\%, 1\%, 5\% for sequencing error rates of $0, 0.01, 0.05, 0.1$ respectively,
+With modified Kmerlight, CovEst produces estimates with relative mean errors approximately 
+<0.1\%, <0.1\%, 1\%, 4\% for sequencing error rates of $0, 0.01, 0.05, 0.1$ respectively,
 and we consider these estimates sufficiently accurate.
 
 \begin{figure}[h]
@@ -82,16 +83,15 @@ for multiple coverages.}
 \label{img:covest-coverages}
 \end{figure}
 
-
 \paragraph{Effects of coverage on precision}
 In the second experiment (Figure \ref{img:covest-coverages}) we study the estimate accuracy 
 for different coverages.
 
 All CovEst estimates $\hat c_j$ in our experiment range in $30\%, 6\%, 0.3\%, <0.1\%$ intervals around the true coverage
-for coverages of 0.5, 2, 10 and 50. The inaccuracies of $\hat c_j$ are comparable to inaccuracies
+for coverages of 0.5, 2, 10 and 50. The variance of $\hat c_j$ is comparable to variance
 of $\hat c_{ok}, \hat c_{mk}$ for two lower coverages but with increasing coverage, estimates
-based on approximate histograms become less accurate. However, since the errors of size 0.3 
-constitute only less than $1\%$ of the true coverage $c=50$, we also consider these estimates
+based on approximate histograms become less accurate. However, since the maximal errors reach values 
+of only 0.3, which is less than $1\%$ of the true coverage $c=50$, we also consider these estimates
 as useful.
 
 Modified Kmerlight significantly (verified by t-tests) outperforms the original Kmerlight 
@@ -156,3 +156,53 @@ to produce precise estimates even for larger genomes.
 % $F_0 \cdot p_i \cdot (1-p_i) \approx F_0 \frac{f_i}{F_0}\left( 1 - \frac{f_i}{F_0} \right)
 % = f_i \left( 1 - \frac{f_i}{F_0} \right)$variance increases approximately linearly
 % with $f_i$ for small ratios of $\frac{f_i}{F_0}$.
+
+\subsubsection{Tables of the experimental results}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ l || r | r | r || r | r | r }
+& \multicolumn{3}{|c||}{Mean error} & \multicolumn{3}{|c}{Standard deviation}\\  
+Dataset & $\hat c_j - c$ & $\hat c_{ok} - c$ & $\hat c_{mk} - c$ & $\hat c_j - c$ & $\hat c_{ok} - c$ & $\hat c_{mk} - c$ \\
+\hline \hline
+$e=0$ & 0.001 & 0.015 & 0.000 & 0.002 & 0.015 & 0.014\\ \hline
+$e=0.01$ & 0.001 & 0.031 & 0.011 & 0.007 & 0.030 & 0.034\\ \hline
+$e=0.05$ & 0.002 & -0.118 & -0.093 & 0.036 & 0.140 & 0.124\\ \hline
+$e=0.1$ & -0.002 & 1.934 & -0.380 & 0.189 & 0.842 & 0.747\\
+\end{tabular}
+\caption[CovEst estimates for different error rates]{Mean errors and standard deviations of CovEst estimates
+based on three types of histograms (in columns for Jellyfish, original Kmerlight, modified Kmerlight) for various
+error rates (in rows).}
+\label{tab:genome-parameters}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ l || r | r | r || r | r | r }
+& \multicolumn{3}{|c||}{Mean error} & \multicolumn{3}{|c}{Standard deviation}\\  
+Dataset & $\hat c_j - c$ & $\hat c_{ok} - c$ & $\hat c_{mk} - c$ & $\hat c_j - c$ & $\hat c_{ok} - c$ & $\hat c_{mk} - c$ \\
+\hline \hline
+$c=0.5$ & -0.010 & 0.133 & 0.072 & 0.065 & 0.030 & 0.029\\ \hline
+$c=2$ & -0.001 & 0.042 & 0.019 & 0.031 & 0.022 & 0.020\\ \hline
+$c=10$ & 0.001 & 0.031 & 0.011 & 0.007 & 0.030 & 0.034\\ \hline
+$c=50$ & 0.008 & -0.360 & 0.024 & 0.014 & 0.141 & 0.147
+\end{tabular}
+\caption[CovEst estimates for different coverages]{Mean errors and standard deviations of CovEst estimates
+on three types of histograms for various coverages.}
+\label{tab:genome-parameters}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ l || r | r | r || r | r | r }
+& \multicolumn{3}{|c||}{Mean error} & \multicolumn{3}{|c}{Standard deviation}\\  
+Dataset & $\hat c_j - c$ & $\hat c_{ok} - c$ & $\hat c_{mk} - c$ & $\hat c_j - c$ & $\hat c_{ok} - c$ & $\hat c_{mk} - c$ \\
+\hline \hline
+$L=10^5$ & 0.006 & 0.059 & 0.022 & 0.024 & 0.028 & 0.032\\ \hline
+$L=10^6$ & 0.001 & 0.031 & 0.011 & 0.007 & 0.030 & 0.034\\ \hline
+$L=10^7$ & 0.000 & -0.008 & -0.008 & 0.002 & 0.025 & 0.032
+\end{tabular}
+\caption[CovEst estimates for different genome sizes]{Mean errors and standard deviations of CovEst estimates
+on three types of histograms for various genome sizes.}
+\label{tab:genome-parameters}
+\end{table}
